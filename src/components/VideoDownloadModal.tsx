@@ -102,7 +102,7 @@ export const VideoDownloadModal: React.FC<VideoDownloadModalProps> = ({
 
     setDownloadProgress(100);
     setStatusMessage("اكتمل تجهيز الملف!");
-    return new Blob(chunks, { type: "video/mp4" });
+    return new Blob(chunks as unknown as BlobPart[], { type: "video/mp4" });
   };
 
   // 1. Mobile Share (Save directly to iOS Camera Roll or Android Gallery)
