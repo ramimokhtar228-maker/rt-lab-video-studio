@@ -28,14 +28,38 @@ import {
 } from "lucide-react";
 
 export default function App() {
-  const [scenes, setScenes] = useState<VideoScene[]>(DEFAULT_SCENES);
+  const [scenes, setScenes] = useState<VideoScene[]>(() => {
+    try {
+      const saved = localStorage.getItem("rt_lab_custom_scenes");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch (e) {
+      console.warn("Could not load saved scenes:", e);
+    }
+    return DEFAULT_SCENES;
+  });
+  const [hasCustomScenes, setHasCustomScenes] = useState<boolean>(() => {
+    try {
+      return !!localStorage.getItem("rt_lab_custom_scenes");
+    } catch {
+      return false;
+    }
+  });
   const [currentSceneIndex, setCurrentSceneIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [aspectRatio, setAspectRatio] = useState<AspectRatio>("16:9");
   const [isVoiceActive, setIsVoiceActive] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
-  const [viewMode, setViewMode] = useState<"video-mp4" | "interactive">("video-mp4");
+  const [viewMode, setViewMode] = useState<"video-mp4" | "interactive">(() => {
+    try {
+      return localStorage.getItem("rt_lab_custom_scenes") ? "interactive" : "video-mp4";
+    } catch {
+      return "video-mp4";
+    }
+  });
 
   // Modals
   const [editingScene, setEditingScene] = useState<VideoScene | null>(null);
@@ -194,8 +218,27 @@ export default function App() {
   };
 
   const handleUpdateScene = (updated: VideoScene) => {
-    setScenes((prev) => prev.map((s) => (s.id === updated.id ? updated : s)));
+    setScenes((prev) => {
+      const next = prev.map((s) => (s.id === updated.id ? updated : s));
+      try {
+        localStorage.setItem("rt_lab_custom_scenes", JSON.stringify(next));
+      } catch (e) {
+        console.warn("Could not save scenes:", e);
+      }
+      return next;
+    });
+    setHasCustomScenes(true);
+    setViewMode("interactive");
     studioAudio.playMedicalDing();
+  };
+
+  const handleResetScenes = () => {
+    try {
+      localStorage.removeItem("rt_lab_custom_scenes");
+    } catch {}
+    setScenes(DEFAULT_SCENES);
+    setHasCustomScenes(false);
+    studioAudio.playCelebrationChime();
   };
 
   // Video Export & Recording
@@ -405,6 +448,24 @@ export default function App() {
             </div>
           </div>
         </div>
+
+        {/* Custom scenes active indicator */}
+        {hasCustomScenes && (
+          <div className="bg-emerald-950/80 border border-emerald-500/50 rounded-2xl p-3.5 flex items-center justify-between text-xs text-emerald-200 shadow-lg animate-in fade-in">
+            <div className="flex items-center gap-2">
+              <CheckCircle className="w-4 h-4 text-emerald-400" />
+              <span className="font-bold">
+                تم تفعيل وتطبيق تعديلاتك المخصصة على الصور والكلمات بنجاح في الاستوديو التفاعلي!
+              </span>
+            </div>
+            <button
+              onClick={handleResetScenes}
+              className="px-3 py-1 bg-slate-900 hover:bg-slate-800 text-rose-300 hover:text-white border border-rose-500/30 rounded-lg text-xs font-semibold transition-colors"
+            >
+              استعادة المشاهد الأصلية ↺
+            </button>
+          </div>
+        )}
 
         {/* Video Player / Canvas Viewport */}
         <div className="space-y-3">
