@@ -81,8 +81,11 @@ export const CanvasRenderer: React.FC<CanvasRendererProps> = ({
   // Preload images into cache
   useEffect(() => {
     const urls = [
-      "./assets/aistudio/rt_lab_doctor_mascot_1792323975479-B2Ib5YiU_4cd8762d.jpg",
-      "./assets/aistudio/Screenshot_20260107-202251_WhatsAppBusiness_cae2a071.jpg",
+      "./assets/aistudio/IMG_20261024_095029_246_b7abdac4.jpg",
+      "./assets/aistudio/IMG_20261024_094906_069_9b5d947e.jpg",
+      "./assets/aistudio/IMG_20261024_095022_303_91099514.jpg",
+      "./assets/aistudio/IMG_20261024_095029_576_cbc318b7.jpg",
+      "./assets/aistudio/IMG_20261024_095022_746_25e09e09.jpg",
       currentScene.imageSrc,
     ];
 

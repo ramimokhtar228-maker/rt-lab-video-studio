@@ -36,11 +36,13 @@ function geminiApiPlugin(): Plugin {
             const body = await parseBody();
             const text = body.text || '';
             const voiceName = body.voiceName || 'Kore';
+
             if (!text.trim()) {
               res.statusCode = 400;
               res.end(JSON.stringify({ error: 'Text is required for TTS' }));
               return;
             }
+
             const result = await generateSpeechAudio(text, voiceName);
             res.statusCode = 200;
             res.end(JSON.stringify(result));
@@ -92,4 +94,3 @@ export default defineConfig(() => {
     },
   };
 });
-

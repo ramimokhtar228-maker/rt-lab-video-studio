@@ -242,60 +242,101 @@ export const SceneEditModal: React.FC<SceneEditModalProps> = ({
 
           {/* Image Chooser */}
           <div className="space-y-2">
-            <label className="block font-bold text-slate-300">الصورة المعروضة في المشهد</label>
-            <div className="grid grid-cols-3 gap-3">
-              {/* Mascot Option */}
+            <label className="block font-bold text-slate-300">الصورة المعروضة في المشهد (صور معامل رامي مختار الرسمية)</label>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+              {/* Option 1: Reception & Patient Care */}
               <div
-                onClick={() =>
-                  setImageSrc(
-                    "./assets/aistudio/rt_lab_doctor_mascot_1792323975479-B2Ib5YiU_4cd8762d.jpg"
-                  )
-                }
+                onClick={() => setImageSrc("./assets/aistudio/IMG_20261024_095029_246_b7abdac4.jpg")}
                 className={`p-2 rounded-xl border cursor-pointer text-center space-y-1 transition-all ${
-                  imageSrc.includes("rt_lab_doctor_mascot")
+                  imageSrc.includes("095029_246")
                     ? "border-rose-500 bg-rose-950/40 ring-2 ring-rose-500/30"
                     : "border-slate-700 bg-slate-800/40 hover:bg-slate-800"
                 }`}
               >
                 <img
-                  src="./assets/aistudio/rt_lab_doctor_mascot_1792323975479-B2Ib5YiU_4cd8762d.jpg"
-                  alt="Mascot"
+                  src="./assets/aistudio/IMG_20261024_095029_246_b7abdac4.jpg"
+                  alt="Reception"
                   className="w-full h-16 object-cover rounded-lg"
                 />
-                <span className="text-[10px] font-bold text-slate-300 block">طبيبة معامل RT (ماسكوت)</span>
+                <span className="text-[10px] font-bold text-slate-300 block truncate">1. استقبال ورعاية العملاء</span>
               </div>
 
-              {/* Team Option */}
+              {/* Option 2: Main Entrance & Lounge */}
               <div
-                onClick={() =>
-                  setImageSrc(
-                    "./assets/aistudio/Screenshot_20260107-202251_WhatsAppBusiness_cae2a071.jpg"
-                  )
-                }
+                onClick={() => setImageSrc("./assets/aistudio/IMG_20261024_094906_069_9b5d947e.jpg")}
                 className={`p-2 rounded-xl border cursor-pointer text-center space-y-1 transition-all ${
-                  imageSrc.includes("WhatsAppBusiness")
+                  imageSrc.includes("094906_069")
                     ? "border-rose-500 bg-rose-950/40 ring-2 ring-rose-500/30"
                     : "border-slate-700 bg-slate-800/40 hover:bg-slate-800"
                 }`}
               >
                 <img
-                  src="./assets/aistudio/Screenshot_20260107-202251_WhatsAppBusiness_cae2a071.jpg"
+                  src="./assets/aistudio/IMG_20261024_094906_069_9b5d947e.jpg"
+                  alt="Entrance"
+                  className="w-full h-16 object-cover rounded-lg"
+                />
+                <span className="text-[10px] font-bold text-slate-300 block truncate">2. مدخل المعامل الرئيسي</span>
+              </div>
+
+              {/* Option 3: 3D Glowing Desk */}
+              <div
+                onClick={() => setImageSrc("./assets/aistudio/IMG_20261024_095022_303_91099514.jpg")}
+                className={`p-2 rounded-xl border cursor-pointer text-center space-y-1 transition-all ${
+                  imageSrc.includes("095022_303")
+                    ? "border-rose-500 bg-rose-950/40 ring-2 ring-rose-500/30"
+                    : "border-slate-700 bg-slate-800/40 hover:bg-slate-800"
+                }`}
+              >
+                <img
+                  src="./assets/aistudio/IMG_20261024_095022_303_91099514.jpg"
+                  alt="Counter"
+                  className="w-full h-16 object-cover rounded-lg"
+                />
+                <span className="text-[10px] font-bold text-slate-300 block truncate">3. كاونتر RT LAB المضيء</span>
+              </div>
+
+              {/* Option 4: Advanced Lab Analyzers */}
+              <div
+                onClick={() => setImageSrc("./assets/aistudio/IMG_20261024_095029_576_cbc318b7.jpg")}
+                className={`p-2 rounded-xl border cursor-pointer text-center space-y-1 transition-all ${
+                  imageSrc.includes("095029_576")
+                    ? "border-rose-500 bg-rose-950/40 ring-2 ring-rose-500/30"
+                    : "border-slate-700 bg-slate-800/40 hover:bg-slate-800"
+                }`}
+              >
+                <img
+                  src="./assets/aistudio/IMG_20261024_095029_576_cbc318b7.jpg"
+                  alt="Lab"
+                  className="w-full h-16 object-cover rounded-lg"
+                />
+                <span className="text-[10px] font-bold text-slate-300 block truncate">4. مختبر التحاليل المتطور</span>
+              </div>
+
+              {/* Option 5: Doctors Medical Team */}
+              <div
+                onClick={() => setImageSrc("./assets/aistudio/IMG_20261024_095022_746_25e09e09.jpg")}
+                className={`p-2 rounded-xl border cursor-pointer text-center space-y-1 transition-all ${
+                  imageSrc.includes("095022_746")
+                    ? "border-rose-500 bg-rose-950/40 ring-2 ring-rose-500/30"
+                    : "border-slate-700 bg-slate-800/40 hover:bg-slate-800"
+                }`}
+              >
+                <img
+                  src="./assets/aistudio/IMG_20261024_095022_746_25e09e09.jpg"
                   alt="Team"
                   className="w-full h-16 object-cover rounded-lg"
                 />
-                <span className="text-[10px] font-bold text-slate-300 block">فريق أطباء RT LAB</span>
+                <span className="text-[10px] font-bold text-slate-300 block truncate">5. الفريق الطبي الاستشاري</span>
               </div>
 
               {/* Upload Custom */}
               <label
                 className={`p-2 rounded-xl border border-dashed border-slate-700 bg-slate-800/40 hover:bg-slate-800 cursor-pointer text-center flex flex-col items-center justify-center space-y-1 transition-all ${
-                  !imageSrc.includes("rt_lab_doctor_mascot") && !imageSrc.includes("WhatsAppBusiness")
-                    ? "border-rose-500 bg-rose-950/40"
-                    : ""
+                  imageSrc.startsWith("data:") ? "border-rose-500 bg-rose-950/40" : ""
                 }`}
               >
                 <Upload className="w-5 h-5 text-slate-400" />
-                <span className="text-[10px] font-bold text-slate-300">رفع صورة خاصة</span>
+                <span className="text-[10px] font-bold text-slate-300">رفع صورة من جهازك</span>
                 <input
                   type="file"
                   accept="image/*"

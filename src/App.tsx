@@ -30,11 +30,12 @@ import {
 export default function App() {
   const [scenes, setScenes] = useState<VideoScene[]>(() => {
     try {
-      const saved = localStorage.getItem("rt_lab_custom_scenes");
+      const saved = localStorage.getItem("rt_lab_custom_scenes_v2");
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) return parsed;
       }
+      localStorage.removeItem("rt_lab_custom_scenes");
     } catch (e) {
       console.warn("Could not load saved scenes:", e);
     }
@@ -42,7 +43,7 @@ export default function App() {
   });
   const [hasCustomScenes, setHasCustomScenes] = useState<boolean>(() => {
     try {
-      return !!localStorage.getItem("rt_lab_custom_scenes");
+      return !!localStorage.getItem("rt_lab_custom_scenes_v2");
     } catch {
       return false;
     }
@@ -55,7 +56,7 @@ export default function App() {
   const [isRecording, setIsRecording] = useState(false);
   const [viewMode, setViewMode] = useState<"video-mp4" | "interactive">(() => {
     try {
-      return localStorage.getItem("rt_lab_custom_scenes") ? "interactive" : "video-mp4";
+      return localStorage.getItem("rt_lab_custom_scenes_v2") ? "interactive" : "video-mp4";
     } catch {
       return "video-mp4";
     }
@@ -81,7 +82,7 @@ export default function App() {
 
   // Initialize master audio element for seamless synchronized studio playback
   useEffect(() => {
-    const audio = new Audio("./assets/audio/rt_lab_master_soundtrack.mp3");
+    const audio = new Audio("./assets/audio/rt_lab_master_soundtrack.mp3?v=20261024");
     audio.preload = "auto";
     masterAudioRef.current = audio;
 
@@ -221,7 +222,7 @@ export default function App() {
     setScenes((prev) => {
       const next = prev.map((s) => (s.id === updated.id ? updated : s));
       try {
-        localStorage.setItem("rt_lab_custom_scenes", JSON.stringify(next));
+        localStorage.setItem("rt_lab_custom_scenes_v2", JSON.stringify(next));
       } catch (e) {
         console.warn("Could not save scenes:", e);
       }
@@ -234,6 +235,7 @@ export default function App() {
 
   const handleResetScenes = () => {
     try {
+      localStorage.removeItem("rt_lab_custom_scenes_v2");
       localStorage.removeItem("rt_lab_custom_scenes");
     } catch {}
     setScenes(DEFAULT_SCENES);
@@ -286,7 +288,7 @@ export default function App() {
 
   const downloadDirectMP4 = () => {
     const a = document.createElement("a");
-    a.href = "./assets/video/rt_lab_21st_anniversary_promo.mp4";
+    a.href = "./assets/video/rt_lab_21st_anniversary_promo.mp4?v=20261024";
     a.download = "RT-Lab-21st-Anniversary-Commercial.mp4";
     document.body.appendChild(a);
     a.click();
@@ -296,7 +298,7 @@ export default function App() {
 
   const downloadMasterAudioMP3 = () => {
     const a = document.createElement("a");
-    a.href = "./assets/audio/rt_lab_master_soundtrack.mp3";
+    a.href = "./assets/audio/rt_lab_master_soundtrack.mp3?v=20261024";
     a.download = "RT-Lab-21st-Anniversary-Audio-Promo.mp3";
     document.body.appendChild(a);
     a.click();
@@ -474,7 +476,7 @@ export default function App() {
             {viewMode === "video-mp4" ? (
               <video
                 ref={videoElementRef}
-                src="./assets/video/rt_lab_21st_anniversary_promo.mp4"
+                src="./assets/video/rt_lab_21st_anniversary_promo.mp4?v=20261024"
                 controls
                 playsInline
                 className="w-full h-full object-contain"
