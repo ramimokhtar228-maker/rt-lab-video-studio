@@ -1,0 +1,6 @@
+{
+  "name": "RT Lab Video & Audio Studio - استوديو إعلانات معامل RT",
+  "description": "استوديو متكامل لإنتاج إعلانات الفيديو والصوت لمعامل RT الطبية بمناسبة مرور 21 عاماً مع التعليق الصوتي الذكي والموسيقى الرقيقة وتصدير الفيديو.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
