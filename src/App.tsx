@@ -9,6 +9,7 @@ import { PosterModal } from "./components/PosterModal";
 import { VideoDownloadModal } from "./components/VideoDownloadModal";
 import { studioAudio } from "./audio/audioEngine";
 import { videoRecorder } from "./services/videoRecorder";
+import { VOICE_PERSONAS, speechService } from "./services/speechService";
 import {
   Play,
   Pause,
@@ -26,6 +27,8 @@ import {
   Film,
   Sliders,
   Volume2,
+  Music,
+  Mic,
 } from "lucide-react";
 
 export default function App() {
@@ -69,9 +72,12 @@ export default function App() {
   const [showDownloadModal, setShowDownloadModal] = useState(false);
   const [videoError, setVideoError] = useState<string | null>(null);
 
-  // Voice Settings
+  // Voice & Music Settings
+  const [selectedMusicTrack, setSelectedMusicTrack] = useState<string>("egyptian-warm");
   const [voiceSettings, setVoiceSettings] = useState<VoiceSettings>({
-    engine: "gemini-ai",
+    engine: "recorded",
+    persona: "egyptian-mariam",
+    dialect: "egyptian",
     geminiVoice: "Kore",
     rate: 0.95,
     pitch: 1.0,
@@ -83,9 +89,16 @@ export default function App() {
 
   const totalDuration = scenes.reduce((acc, s) => acc + s.duration, 0);
 
+  const getContinuousAudioSrc = () => {
+    const isEgyptian = voiceSettings.dialect === "egyptian" || voiceSettings.persona.startsWith("egyptian-");
+    return isEgyptian
+      ? "./assets/audio/rt_lab_egyptian_master_soundtrack.mp3?v=20261024"
+      : "./assets/audio/rt_lab_master_soundtrack.mp3?v=20261024";
+  };
+
   // Initialize master audio element for seamless synchronized studio playback
   useEffect(() => {
-    const audio = new Audio("./assets/audio/rt_lab_master_soundtrack.mp3?v=20261024");
+    const audio = new Audio(getContinuousAudioSrc());
     audio.preload = "auto";
     masterAudioRef.current = audio;
 
@@ -111,6 +124,23 @@ export default function App() {
     };
   }, []);
 
+  // Sync master continuous audio with persona changes
+  useEffect(() => {
+    if (masterAudioRef.current) {
+      const newSrc = getContinuousAudioSrc();
+      const currentSrc = masterAudioRef.current.src;
+      if (!currentSrc.includes(newSrc.replace(/^\.\//, ""))) {
+        const wasPlaying = isPlaying;
+        const savedTime = masterAudioRef.current.currentTime;
+        masterAudioRef.current.src = newSrc;
+        masterAudioRef.current.currentTime = Math.min(savedTime, totalDuration);
+        if (wasPlaying && isPlaying) {
+          masterAudioRef.current.play().catch(console.warn);
+        }
+      }
+    }
+  }, [voiceSettings.persona, voiceSettings.dialect]);
+
   // Calculate current scene and its progress based on master playback time
   const getCurrentSceneAndProgress = () => {
     let accumulated = 0;
@@ -127,6 +157,24 @@ export default function App() {
   };
 
   const { index: activeIndex, scene: currentScene, sceneProgress } = getCurrentSceneAndProgress();
+
+  const isEgyptianActive = voiceSettings.dialect === "egyptian" || voiceSettings.persona.startsWith("egyptian-");
+  const activeMp4Src = isEgyptianActive
+    ? "./assets/video/rt_lab_21st_anniversary_egyptian.mp4?v=20261024_faststart_v2"
+    : "./assets/video/rt_lab_21st_anniversary_promo.mp4?v=20261024_faststart_v2";
+
+  useEffect(() => {
+    if (videoElementRef.current && viewMode === "video-mp4") {
+      const prevTime = videoElementRef.current.currentTime;
+      const wasPaused = videoElementRef.current.paused;
+      videoElementRef.current.src = activeMp4Src;
+      videoElementRef.current.load();
+      videoElementRef.current.currentTime = prevTime;
+      if (!wasPaused && isPlaying) {
+        videoElementRef.current.play().catch(console.warn);
+      }
+    }
+  }, [activeMp4Src]);
 
   useEffect(() => {
     if (activeIndex !== currentSceneIndex) {
@@ -466,6 +514,105 @@ export default function App() {
           </div>
         )}
 
+        {/* Quick Audio, Dialect & Music Switcher Bar */}
+        <div className="bg-slate-900/90 border border-rose-500/30 rounded-2xl p-4 shadow-xl space-y-3 text-right">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-3 border-b border-slate-800">
+            <div className="flex items-center gap-2">
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+              <h4 className="font-black text-sm text-white flex items-center gap-2">
+                تخصيص صوت القارئ والموسيقى في نفس الفيديو
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                  تغيير فوري مباشر
+                </span>
+              </h4>
+            </div>
+            <div className="text-xs text-slate-400">
+              يمكنك التبديل بين أصوات العامية المصرية وأصوات الفصحى واختيار الموسيقى المناسبة
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 items-center">
+            {/* 1. Voice Narrator Select */}
+            <div className="bg-slate-950/80 p-2.5 rounded-xl border border-rose-500/30 space-y-1">
+              <label className="text-[11px] font-bold text-rose-300 flex items-center gap-1.5">
+                <Mic className="w-3.5 h-3.5 text-rose-400" />
+                صوت القارئ (المصري أو الفصحى):
+              </label>
+              <select
+                value={voiceSettings.persona}
+                onChange={(e) => {
+                  const pId = e.target.value as any;
+                  const personaObj = VOICE_PERSONAS.find((p) => p.id === pId);
+                  if (personaObj) {
+                    const isEg = personaObj.category === "egyptian";
+                    setVoiceSettings({
+                      ...voiceSettings,
+                      persona: pId,
+                      dialect: isEg ? "egyptian" : "standard",
+                      geminiVoice: personaObj.geminiVoice,
+                      engine: personaObj.engine,
+                    });
+                    studioAudio.playClickSound();
+                  }
+                }}
+                className="w-full bg-slate-900 border border-slate-700 text-white font-bold text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-rose-500"
+              >
+                <optgroup label="🇪🇬 أصوات العامية المصرية">
+                  <option value="egyptian-mariam">👩 مريم (عامية مصرية دافئة وودودة)</option>
+                  <option value="egyptian-ahmed">👨‍⚕️ د. أحمد (مصري عامي - رسمي ومطمئن)</option>
+                  <option value="egyptian-karim">🧑 كريم (مصري عامي - شبابي ومبهج)</option>
+                </optgroup>
+                <optgroup label="🎙️ أصوات الفصحى الإذاعية">
+                  <option value="standard-kore">🎙️ نور / Kore (فصحى إذاعية فاخرة - نسائي)</option>
+                  <option value="standard-puck">🎙️ طارق / Puck (فصحى مبهجة واحتفالية)</option>
+                  <option value="standard-fenrir">🎙️ عمر / Fenrir (فصحى وقورة وموثوقة)</option>
+                  <option value="standard-zephyr">🎙️ ليلى / Zephyr (فصحى هادئة وسكينة)</option>
+                </optgroup>
+                <optgroup label="📱 أصوات الجهاز المباشرة">
+                  <option value="webspeech">📱 قارئ النظام المباشر (Web Speech)</option>
+                </optgroup>
+              </select>
+            </div>
+
+            {/* 2. Music Track Select */}
+            <div className="bg-slate-950/80 p-2.5 rounded-xl border border-amber-500/30 space-y-1">
+              <label className="text-[11px] font-bold text-amber-300 flex items-center gap-1.5">
+                <Music className="w-3.5 h-3.5 text-amber-400" />
+                الموسيقى المصاحبة:
+              </label>
+              <select
+                value={selectedMusicTrack}
+                onChange={(e) => {
+                  const trackId = e.target.value;
+                  setSelectedMusicTrack(trackId);
+                  studioAudio.changeTrack(trackId);
+                  studioAudio.playClickSound();
+                }}
+                className="w-full bg-slate-900 border border-slate-700 text-white font-bold text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-amber-500"
+              >
+                <option value="egyptian-warm">🎶 نغم مصري شرقي راقي (Oud & Strings)</option>
+                <option value="master-soundtrack">🎵 الموسيقى الرسمية الماستر (Original Master)</option>
+                <option value="soft-piano">🎹 بيانو هادئ ورقيق (Delicate Piano)</option>
+                <option value="medical-calm">🎻 تناغم وتريات طبية (Calm Strings)</option>
+                <option value="celebration-acoustic">🎉 احتفالية دافئة ومبهجة (Warm Celebration)</option>
+                <option value="ambient-lullaby">🍃 عزف هادئ للتأمل (Peaceful Ambient)</option>
+                <option value="none">🔇 بدون موسيقى (تعليق صوتي نقي فقط)</option>
+              </select>
+            </div>
+
+            {/* 3. Instant Play Action */}
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handlePlayPause}
+                className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-rose-600 to-rose-700 hover:from-rose-500 hover:to-rose-600 text-white font-black text-xs flex items-center justify-center gap-2 shadow-lg shadow-rose-950 transition-all active:scale-95"
+              >
+                {isPlaying ? <Pause className="w-4 h-4 fill-current" /> : <Play className="w-4 h-4 fill-current" />}
+                <span>{isPlaying ? "إيقاف مؤقت" : "تشغيل الفيديو بالصوت المحدد 🎬"}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
         {/* Video Player / Canvas Viewport */}
         <div className="space-y-3">
           <div className="relative w-full aspect-video max-h-[580px] flex items-center justify-center bg-black/95 rounded-2xl overflow-hidden border border-rose-500/30 shadow-2xl">
@@ -494,7 +641,7 @@ export default function App() {
                   }}
                 >
                   <source
-                    src="./assets/video/rt_lab_21st_anniversary_promo.mp4?v=20261024_faststart_v2"
+                    src={activeMp4Src}
                     type="video/mp4"
                   />
                   متصفحك لا يدعم تشغيل الفيديو مباشرة
@@ -540,6 +687,7 @@ export default function App() {
                   aspectRatio={aspectRatio}
                   isPlaying={isPlaying}
                   isVoiceActive={isVoiceActive}
+                  isEgyptian={isEgyptianActive}
                   onCanvasReady={(c) => {
                     canvasRef.current = c;
                   }}
@@ -696,6 +844,8 @@ export default function App() {
         <AudioMixerPanel
           voiceSettings={voiceSettings}
           onVoiceSettingsChange={setVoiceSettings}
+          selectedMusicTrack={selectedMusicTrack}
+          onMusicTrackChange={setSelectedMusicTrack}
           isVoiceActive={isVoiceActive}
         />
 
@@ -790,6 +940,7 @@ export default function App() {
         <VideoDownloadModal
           isOpen={showDownloadModal}
           onClose={() => setShowDownloadModal(false)}
+          defaultDialect={isEgyptianActive ? "egyptian" : "standard"}
         />
       )}
     </div>

@@ -11,6 +11,7 @@ interface CanvasRendererProps {
   aspectRatio: AspectRatio;
   isPlaying: boolean;
   isVoiceActive: boolean;
+  isEgyptian?: boolean;
   onCanvasReady?: (canvas: HTMLCanvasElement) => void;
 }
 
@@ -34,6 +35,7 @@ export const CanvasRenderer: React.FC<CanvasRendererProps> = ({
   aspectRatio,
   isPlaying,
   isVoiceActive,
+  isEgyptian = false,
   onCanvasReady,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -249,7 +251,10 @@ export const CanvasRenderer: React.FC<CanvasRendererProps> = ({
       }
 
       // 6. Subtitle / Karaoke Captions bar at bottom
-      renderCaptionsBar(ctx, currentScene.narrationScript, width, height, isVertical, isVoiceActive, sceneProgress);
+      const activeScript = (isEgyptian && currentScene.egyptianScript)
+        ? currentScene.egyptianScript
+        : currentScene.narrationScript;
+      renderCaptionsBar(ctx, activeScript, width, height, isVertical, isVoiceActive, sceneProgress);
 
       // 7. Live Sound Visualizer at bottom border
       renderAudioWaveform(ctx, width, height);

@@ -43,7 +43,7 @@ function geminiApiPlugin(): Plugin {
               return;
             }
 
-            const result = await generateSpeechAudio(text, voiceName);
+            const result = await generateSpeechAudio(text, voiceName, body.style);
             res.statusCode = 200;
             res.end(JSON.stringify(result));
             return;

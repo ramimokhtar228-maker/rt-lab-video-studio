@@ -16,7 +16,7 @@ export const ai = apiKey
     })
   : null;
 
-export async function generateSpeechAudio(text: string, voiceName: string = "Kore") {
+export async function generateSpeechAudio(text: string, voiceName: string = "Kore", style?: string) {
   if (!ai) {
     throw new Error("GEMINI_API_KEY is not configured on the server.");
   }
@@ -31,7 +31,7 @@ export async function generateSpeechAudio(text: string, voiceName: string = "Kor
           {
             text,
             speechMetadata: {
-              style: "Warm, respectful, articulate, professional, celebratory Arabic medical announcer",
+              style: style || "Warm, respectful, articulate, professional, celebratory Arabic medical announcer",
             },
           },
         ],

@@ -11,12 +11,14 @@ import {
   Play,
   Copy,
   MessageCircle,
+  Sparkles,
 } from "lucide-react";
 import { studioAudio } from "../audio/audioEngine";
 
 interface VideoDownloadModalProps {
   isOpen: boolean;
   onClose: () => void;
+  defaultDialect?: "egyptian" | "standard";
   videoUrl?: string;
   audioUrl?: string;
 }
@@ -24,9 +26,9 @@ interface VideoDownloadModalProps {
 export const VideoDownloadModal: React.FC<VideoDownloadModalProps> = ({
   isOpen,
   onClose,
-  videoUrl = "./assets/video/rt_lab_21st_anniversary_promo.mp4?v=20261024_faststart_v2",
-  audioUrl = "./assets/audio/rt_lab_master_soundtrack.mp3?v=20261024",
+  defaultDialect = "egyptian",
 }) => {
+  const [selectedVersion, setSelectedVersion] = useState<"egyptian" | "standard">(defaultDialect);
   const [downloadProgress, setDownloadProgress] = useState<number | null>(null);
   const [statusMessage, setStatusMessage] = useState<string>("");
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
@@ -40,6 +42,21 @@ export const VideoDownloadModal: React.FC<VideoDownloadModalProps> = ({
   const isIOS =
     typeof navigator !== "undefined" &&
     /iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+  const activeVideoUrl =
+    selectedVersion === "egyptian"
+      ? "./assets/video/rt_lab_21st_anniversary_egyptian.mp4?v=20261024_faststart_v2"
+      : "./assets/video/rt_lab_21st_anniversary_promo.mp4?v=20261024_faststart_v2";
+
+  const activeAudioUrl =
+    selectedVersion === "egyptian"
+      ? "./assets/audio/rt_lab_egyptian_master_soundtrack.mp3?v=20261024"
+      : "./assets/audio/rt_lab_master_soundtrack.mp3?v=20261024";
+
+  const activeFilename =
+    selectedVersion === "egyptian"
+      ? "RT-Lab-21st-Anniversary-Commercial-Egyptian.mp4"
+      : "RT-Lab-21st-Anniversary-Commercial-Standard.mp4";
 
   // Helper to fetch video file with real progress
   const fetchVideoBlob = async (url: string): Promise<Blob> => {
@@ -92,14 +109,10 @@ export const VideoDownloadModal: React.FC<VideoDownloadModalProps> = ({
   const handleMobileSaveOrShare = async () => {
     try {
       setIsSuccess(false);
-      const blob = await fetchVideoBlob(videoUrl);
-      const filename = "RT-Lab-21st-Anniversary-Commercial.mp4";
-      const file = new File([blob], filename, { type: "video/mp4" });
+      const blob = await fetchVideoBlob(activeVideoUrl);
+      const file = new File([blob], activeFilename, { type: "video/mp4" });
 
-      if (
-        navigator.canShare &&
-        navigator.canShare({ files: [file] })
-      ) {
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
         setStatusMessage("افتح قائمة المشاركة واختر 'حفظ الفيديو'...");
         await navigator.share({
           title: "إعلان معامل رامي مختار RT للتحاليل الطبية",
@@ -110,8 +123,7 @@ export const VideoDownloadModal: React.FC<VideoDownloadModalProps> = ({
         setStatusMessage("تمت مشاركة وحفظ الفيديو بنجاح! 🎉");
         studioAudio.playCelebrationChime();
       } else {
-        // Fallback to direct blob download
-        triggerBlobDownload(blob, filename);
+        triggerBlobDownload(blob, activeFilename);
       }
     } catch (err: any) {
       console.warn("Mobile share aborted or failed:", err);
@@ -145,14 +157,13 @@ export const VideoDownloadModal: React.FC<VideoDownloadModalProps> = ({
   const handleDirectDownload = async () => {
     try {
       setIsSuccess(false);
-      const blob = await fetchVideoBlob(videoUrl);
-      triggerBlobDownload(blob, "RT-Lab-21st-Anniversary-Commercial.mp4");
+      const blob = await fetchVideoBlob(activeVideoUrl);
+      triggerBlobDownload(blob, activeFilename);
     } catch (err) {
       console.error("Direct download error:", err);
-      // Last resort: standard anchor click
       const link = document.createElement("a");
-      link.href = videoUrl;
-      link.download = "RT-Lab-21st-Anniversary-Commercial.mp4";
+      link.href = activeVideoUrl;
+      link.download = activeFilename;
       link.target = "_blank";
       document.body.appendChild(link);
       link.click();
@@ -163,14 +174,14 @@ export const VideoDownloadModal: React.FC<VideoDownloadModalProps> = ({
 
   // 3. Open Video in dedicated page for long-press save
   const handleOpenInNewTab = () => {
-    window.open(videoUrl, "_blank", "noopener,noreferrer");
+    window.open(activeVideoUrl, "_blank", "noopener,noreferrer");
   };
 
   // 4. Download Audio MP3
   const handleDownloadAudio = () => {
     const link = document.createElement("a");
-    link.href = audioUrl;
-    link.download = "RT-Lab-21st-Anniversary-MasterSoundtrack.mp3";
+    link.href = activeAudioUrl;
+    link.download = `RT-Lab-21st-Anniversary-${selectedVersion === "egyptian" ? "Egyptian" : "Master"}-Soundtrack.mp3`;
     link.target = "_blank";
     document.body.appendChild(link);
     link.click();
@@ -181,7 +192,7 @@ export const VideoDownloadModal: React.FC<VideoDownloadModalProps> = ({
   // 5. Copy Video Link
   const handleCopyLink = async () => {
     try {
-      const fullUrl = new URL(videoUrl, window.location.href).href;
+      const fullUrl = new URL(activeVideoUrl, window.location.href).href;
       await navigator.clipboard.writeText(fullUrl);
       setHasCopiedLink(true);
       setTimeout(() => setHasCopiedLink(false), 3000);
@@ -217,6 +228,43 @@ export const VideoDownloadModal: React.FC<VideoDownloadModalProps> = ({
           </div>
         </div>
 
+        {/* Version Switcher Tabs: Egyptian vs Standard */}
+        <div className="bg-slate-950/80 p-1.5 rounded-2xl border border-slate-800 flex items-center gap-1">
+          <button
+            onClick={() => {
+              setSelectedVersion("egyptian");
+              studioAudio.playClickSound();
+            }}
+            className={`flex-1 py-2 px-3 rounded-xl font-bold text-xs transition-all flex items-center justify-center gap-1.5 ${
+              selectedVersion === "egyptian"
+                ? "bg-gradient-to-r from-rose-600 to-rose-700 text-white shadow-md shadow-rose-950"
+                : "text-slate-400 hover:text-white hover:bg-slate-900"
+            }`}
+          >
+            <span>🇪🇬 نسخة العامية المصرية</span>
+            <span className="text-[10px] bg-rose-950/80 px-1.5 py-0.5 rounded-full border border-rose-400/30 text-rose-200">
+              صوت مريم + نغم شرقي
+            </span>
+          </button>
+
+          <button
+            onClick={() => {
+              setSelectedVersion("standard");
+              studioAudio.playClickSound();
+            }}
+            className={`flex-1 py-2 px-3 rounded-xl font-bold text-xs transition-all flex items-center justify-center gap-1.5 ${
+              selectedVersion === "standard"
+                ? "bg-gradient-to-r from-rose-600 to-rose-700 text-white shadow-md shadow-rose-950"
+                : "text-slate-400 hover:text-white hover:bg-slate-900"
+            }`}
+          >
+            <span>🎙️ نسخة الفصحى الرسمية</span>
+            <span className="text-[10px] bg-rose-950/80 px-1.5 py-0.5 rounded-full border border-rose-400/30 text-rose-200">
+              صوت نور + أوركسترا
+            </span>
+          </button>
+        </div>
+
         {/* Progress or status banner */}
         {downloadProgress !== null && (
           <div className="p-4 rounded-2xl bg-slate-950/80 border border-rose-500/40 space-y-2">
@@ -244,11 +292,15 @@ export const VideoDownloadModal: React.FC<VideoDownloadModalProps> = ({
         <div className="bg-slate-950/60 border border-slate-800/80 rounded-2xl p-4 text-xs space-y-2 text-slate-300 leading-relaxed">
           <div className="flex items-center gap-2 font-bold text-amber-300 text-sm">
             <Smartphone className="w-4 h-4 text-rose-400" />
-            <span>معلومات التوافق الكامل مع الموبايل:</span>
+            <span>
+              {selectedVersion === "egyptian"
+                ? "فيديو العامية المصرية (جاهز للحفظ على الموبايل):"
+                : "فيديو الفصحى الرسمية (جاهز للحفظ على الموبايل):"}
+            </span>
           </div>
           <p>
-            تم تجهيز الفيديو وتحديثه بصيغة <strong>MP4 (H.264 / AAC)</strong> بنظام{" "}
-            <span className="text-emerald-400 font-mono">FastStart</span> لتشغيله وتنزيله بسلاسة تامة على هواتف <strong>آيفون (iOS Safari)</strong> و <strong>أندرويد (Android)</strong> ومتصفحات واتساب وفيسبوك دون توقف.
+            الملف مجهز بصيغة <strong>MP4 (H.264 / AAC)</strong> بنظام{" "}
+            <span className="text-emerald-400 font-mono">FastStart</span> لتنزيله وحفظه فوراً على هواتف <strong>آيفون (iPhone Photos)</strong> و <strong>أندرويد</strong> والواتساب.
           </p>
         </div>
 
@@ -273,7 +325,7 @@ export const VideoDownloadModal: React.FC<VideoDownloadModalProps> = ({
             className="w-full py-3 px-4 rounded-2xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white font-bold text-xs flex items-center justify-center gap-2 transition-all hover:border-slate-500"
           >
             <Download className="w-4 h-4 text-rose-400" />
-            <span>تنزيل ملف الفيديو المباشر (MP4 - 6.6MB) 💾</span>
+            <span>تنزيل ملف الفيديو المباشر (MP4) 💾</span>
           </button>
 
           {/* Button 3: Open in new tab (Long-press save method for mobile) */}

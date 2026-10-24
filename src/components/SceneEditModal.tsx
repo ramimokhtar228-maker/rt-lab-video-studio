@@ -23,6 +23,7 @@ export const SceneEditModal: React.FC<SceneEditModalProps> = ({
   const [headline, setHeadline] = useState(scene.headline);
   const [subheadline, setSubheadline] = useState(scene.subheadline);
   const [narrationScript, setNarrationScript] = useState(scene.narrationScript);
+  const [egyptianScript, setEgyptianScript] = useState(scene.egyptianScript || "");
   const [duration, setDuration] = useState(scene.duration);
   const [imageSrc, setImageSrc] = useState(scene.imageSrc);
   const [badge, setBadge] = useState(scene.badge || "");
@@ -105,6 +106,7 @@ export const SceneEditModal: React.FC<SceneEditModalProps> = ({
       headline,
       subheadline,
       narrationScript,
+      egyptianScript,
       duration,
       imageSrc,
       badge,
@@ -219,7 +221,23 @@ export const SceneEditModal: React.FC<SceneEditModalProps> = ({
               value={narrationScript}
               onChange={(e) => setNarrationScript(e.target.value)}
               className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white leading-relaxed focus:outline-none focus:border-rose-500 text-sm"
-              placeholder="اكتب هنا النص المراد نطقه بصوت واضح..."
+              placeholder="اكتب هنا النص باللغة العربية الفصحى..."
+            />
+          </div>
+
+          {/* Egyptian Dialect Script */}
+          <div className="bg-slate-950/80 p-3.5 rounded-xl border border-amber-900/30 space-y-2">
+            <div className="flex items-center justify-between">
+              <label className="font-bold text-amber-300 flex items-center gap-1.5 text-xs">
+                <span>🇪🇬 النص باللغة العامية المصرية (للقراء المصريين مريم وأحمد وكريم)</span>
+              </label>
+            </div>
+            <textarea
+              rows={3}
+              value={egyptianScript}
+              onChange={(e) => setEgyptianScript(e.target.value)}
+              className="w-full bg-slate-900 border border-amber-500/30 rounded-lg p-2.5 text-white leading-relaxed focus:outline-none focus:border-amber-500 text-sm"
+              placeholder="اكتب هنا النص باللهجة المصرية العامية الطبيعية..."
             />
           </div>
 

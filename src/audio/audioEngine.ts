@@ -1,7 +1,7 @@
 /**
  * Professional Web Audio API Synthesizer & Sound Mixer for RT Lab
  * Includes:
- * 1. Procedural Gentle Ambient / Piano / Rhodes Chords ("موسيقى رقيقة")
+ * 1. Multiple background music tracks (Oriental Egyptian Oud, Gentle Piano, Calm Strings, Master Soundtrack)
  * 2. Speech & Voiceover mixer with auto-ducking using AudioBufferSourceNode
  * 3. Celebration & Medical UI sound effects
  * 4. Master recording stream for video export with 100% audio reliability
@@ -12,18 +12,34 @@ export interface MusicTrackOption {
   name: string;
   description: string;
   bpm: number;
+  fileSrc?: string;
 }
 
 export const MUSIC_PRESETS: MusicTrackOption[] = [
+  {
+    id: "master-soundtrack",
+    name: "الموسيقى الرسمية الماستر (Original Master)",
+    description: "الموسيقى الاحتفالية المعتمدة لمعامل RT بصوت نقي متصل",
+    bpm: 72,
+    fileSrc: "./assets/audio/gentle_music.wav",
+  },
+  {
+    id: "egyptian-warm",
+    name: "نغم مصري شرقي راقي (Egyptian Oud & Strings)",
+    description: "عزف دافئ وراقي يجمع بين العود والقانون والوتريات الهادئة",
+    bpm: 68,
+    fileSrc: "./assets/audio/music_oriental_warm.wav",
+  },
   {
     id: "soft-piano",
     name: "بيانو هادئ ورقيق (Delicate Piano)",
     description: "نغمات بيانو كلاسيكية ناعمة تبعث على الراحة والسكينة",
     bpm: 68,
+    fileSrc: "./assets/audio/music_piano_delicate.wav",
   },
   {
     id: "medical-calm",
-    name: "تناغم طبي ووتريات (Calm Strings & Celesta)",
+    name: "تناغم وتريات طبية (Calm Strings & Celesta)",
     description: "موسيقى راقية تجمع بين الوترية الناعمة وأجراس النقاء الطبي",
     bpm: 72,
   },
@@ -39,6 +55,12 @@ export const MUSIC_PRESETS: MusicTrackOption[] = [
     description: "موسيقى خفيفة جداً تبرز نبرات الصوت بوضوح فائق",
     bpm: 60,
   },
+  {
+    id: "none",
+    name: "بدون موسيقى (تعليق صوتي نقي فقط)",
+    description: "صوت القارئ فقط بوضوح كامل وبدون أي موسيقى خلفية",
+    bpm: 0,
+  },
 ];
 
 class RTStudioAudioEngine {
@@ -52,8 +74,9 @@ class RTStudioAudioEngine {
 
   private isMusicPlaying: boolean = false;
   private musicTimer: number | null = null;
-  private currentTrack: string = "soft-piano";
+  private currentTrack: string = "master-soundtrack";
   private currentStep: number = 0;
+  private activeMusicSourceNode: AudioBufferSourceNode | null = null;
 
   // Active voice buffer source node
   private currentVoiceSource: AudioBufferSourceNode | null = null;
@@ -61,7 +84,7 @@ class RTStudioAudioEngine {
 
   // Volumes
   private masterVol: number = 0.95;
-  private musicVol: number = 0.22; // gentle background
+  private musicVol: number = 0.24; // gentle background
   private voiceVol: number = 1.0;  // crystal clear voice
   private sfxVol: number = 0.6;
   private duckingEnabled: boolean = true;
@@ -155,7 +178,7 @@ class RTStudioAudioEngine {
    */
   public duckMusic(isSpeaking: boolean) {
     if (!this.ctx || !this.musicGain || !this.duckingEnabled) return;
-    const target = isSpeaking ? this.musicVol * 0.18 : this.musicVol;
+    const target = isSpeaking ? this.musicVol * 0.16 : this.musicVol;
     this.musicGain.gain.cancelScheduledValues(this.ctx.currentTime);
     this.musicGain.gain.setTargetAtTime(target, this.ctx.currentTime, 0.1);
   }
@@ -203,15 +226,42 @@ class RTStudioAudioEngine {
   }
 
   /**
-   * Starts gentle procedural background music
+   * Starts gentle background music (from file loop or procedural synth)
    */
-  public startMusic(trackId?: string) {
+  public async startMusic(trackId?: string) {
     this.init();
     if (trackId) this.currentTrack = trackId;
+
+    if (this.currentTrack === "none") {
+      this.stopMusic();
+      return;
+    }
+
     if (this.isMusicPlaying) return;
     this.isMusicPlaying = true;
     this.currentStep = 0;
 
+    const trackObj = MUSIC_PRESETS.find((p) => p.id === this.currentTrack);
+
+    // Option A: File-based looped soundtrack
+    if (trackObj && trackObj.fileSrc) {
+      try {
+        const buffer = await this.loadAudioBuffer(trackObj.fileSrc);
+        if (!this.isMusicPlaying || !this.ctx || !this.musicGain) return;
+
+        const source = this.ctx.createBufferSource();
+        source.buffer = buffer;
+        source.loop = true;
+        source.connect(this.musicGain);
+        source.start(0);
+        this.activeMusicSourceNode = source;
+        return;
+      } catch (err) {
+        console.warn("Failed to play audio file track, fallback to synth:", err);
+      }
+    }
+
+    // Option B: Procedural warm synthesizer chords
     const chordProgressions: { [key: string]: number[][] } = {
       "soft-piano": [
         [261.63, 329.63, 392.0, 587.33], // C4, E4, G4, D5
@@ -235,6 +285,12 @@ class RTStudioAudioEngine {
         [174.61, 261.63, 329.63, 349.23],
         [261.63, 329.63, 392.0, 523.25],
         [196.0, 246.94, 293.66, 392.0],
+      ],
+      "egyptian-warm": [
+        [220.0, 261.63, 293.66, 349.23, 440.0],
+        [196.0, 246.94, 293.66, 392.0, 440.0],
+        [174.61, 220.0, 261.63, 329.63, 392.0],
+        [164.81, 207.65, 246.94, 329.63, 440.0],
       ],
     };
 
@@ -268,6 +324,15 @@ class RTStudioAudioEngine {
       clearTimeout(this.musicTimer);
       this.musicTimer = null;
     }
+    if (this.activeMusicSourceNode) {
+      try {
+        this.activeMusicSourceNode.stop();
+        this.activeMusicSourceNode.disconnect();
+      } catch (e) {
+        // ignored
+      }
+      this.activeMusicSourceNode = null;
+    }
   }
 
   public toggleMusic(trackId?: string): boolean {
@@ -280,6 +345,19 @@ class RTStudioAudioEngine {
     }
   }
 
+  public changeTrack(trackId: string) {
+    const wasPlaying = this.isMusicPlaying;
+    this.stopMusic();
+    this.currentTrack = trackId;
+    if (wasPlaying && trackId !== "none") {
+      this.startMusic(trackId);
+    }
+  }
+
+  public getCurrentTrack(): string {
+    return this.currentTrack;
+  }
+
   public isPlaying(): boolean {
     return this.isMusicPlaying;
   }
@@ -287,7 +365,7 @@ class RTStudioAudioEngine {
   /**
    * Load and decode audio buffer from URL or base64
    */
-  private async loadAudioBuffer(src: string): Promise<AudioBuffer> {
+  public async loadAudioBuffer(src: string): Promise<AudioBuffer> {
     if (this.bufferCache.has(src)) {
       return this.bufferCache.get(src)!;
     }
@@ -320,7 +398,6 @@ class RTStudioAudioEngine {
 
   /**
    * Play crystal-clear audio buffer through Web Audio API
-   * Guaranteed 100% complete playback, no cutoffs, perfect sync with MediaRecorder
    */
   public async playVoiceAudio(src: string): Promise<void> {
     this.init();
@@ -356,7 +433,6 @@ class RTStudioAudioEngine {
       });
     } catch (err) {
       console.warn("Buffer playback failed, fallback to Audio element:", err);
-      // Fallback to HTMLAudioElement if decode fails
       return this.playFallbackAudioElement(src);
     }
   }
