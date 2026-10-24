@@ -6,6 +6,7 @@ import { AudioMixerPanel } from "./components/AudioMixerPanel";
 import { SceneTimeline } from "./components/SceneTimeline";
 import { SceneEditModal } from "./components/SceneEditModal";
 import { PosterModal } from "./components/PosterModal";
+import { VideoDownloadModal } from "./components/VideoDownloadModal";
 import { studioAudio } from "./audio/audioEngine";
 import { videoRecorder } from "./services/videoRecorder";
 import {
@@ -65,6 +66,8 @@ export default function App() {
   // Modals
   const [editingScene, setEditingScene] = useState<VideoScene | null>(null);
   const [showPosterModal, setShowPosterModal] = useState(false);
+  const [showDownloadModal, setShowDownloadModal] = useState(false);
+  const [videoError, setVideoError] = useState<string | null>(null);
 
   // Voice Settings
   const [voiceSettings, setVoiceSettings] = useState<VoiceSettings>({
@@ -281,19 +284,13 @@ export default function App() {
     const blob = await videoRecorder.stopRecording();
     setIsRecording(false);
     if (blob) {
-      videoRecorder.downloadVideo(blob, `RT-Lab-21st-Anniversary-Video.webm`);
+      await videoRecorder.downloadVideo(blob, `RT-Lab-21st-Anniversary-Custom.mp4`);
       studioAudio.playCelebrationChime();
     }
   };
 
   const downloadDirectMP4 = () => {
-    const a = document.createElement("a");
-    a.href = "./assets/video/rt_lab_21st_anniversary_promo.mp4?v=20261024";
-    a.download = "RT-Lab-21st-Anniversary-Commercial.mp4";
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    studioAudio.playCelebrationChime();
+    setShowDownloadModal(true);
   };
 
   const downloadMasterAudioMP3 = () => {
@@ -474,19 +471,63 @@ export default function App() {
           <div className="relative w-full aspect-video max-h-[580px] flex items-center justify-center bg-black/95 rounded-2xl overflow-hidden border border-rose-500/30 shadow-2xl">
             {/* Mode 1: Real Commercial MP4 Video Player */}
             {viewMode === "video-mp4" ? (
-              <video
-                ref={videoElementRef}
-                src="./assets/video/rt_lab_21st_anniversary_promo.mp4?v=20261024"
-                controls
-                playsInline
-                className="w-full h-full object-contain"
-                onPlay={() => setIsPlaying(true)}
-                onPause={() => setIsPlaying(false)}
-                onTimeUpdate={(e) => {
-                  const target = e.currentTarget;
-                  setCurrentTime(target.currentTime);
-                }}
-              />
+              <div className="relative w-full h-full flex items-center justify-center">
+                <video
+                  ref={videoElementRef}
+                  controls
+                  playsInline
+                  webkit-playsinline="true"
+                  preload="metadata"
+                  poster="./assets/aistudio/IMG_20261024_095029_246_b7abdac4.jpg"
+                  className="w-full h-full object-contain"
+                  onPlay={() => {
+                    setIsPlaying(true);
+                    setVideoError(null);
+                  }}
+                  onPause={() => setIsPlaying(false)}
+                  onError={() => {
+                    setVideoError("إذا تعذر تشغيل الفيديو تلقائياً على متصفح الموبايل، يمكنك حفظ الفيديو مباشرة على هاتفك.");
+                  }}
+                  onTimeUpdate={(e) => {
+                    const target = e.currentTarget;
+                    setCurrentTime(target.currentTime);
+                  }}
+                >
+                  <source
+                    src="./assets/video/rt_lab_21st_anniversary_promo.mp4?v=20261024_faststart_v2"
+                    type="video/mp4"
+                  />
+                  متصفحك لا يدعم تشغيل الفيديو مباشرة
+                </video>
+
+                {videoError && (
+                  <div className="absolute inset-0 bg-black/90 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-center z-20 space-y-3">
+                    <p className="text-amber-300 text-xs font-bold leading-relaxed max-w-md">
+                      {videoError}
+                    </p>
+                    <div className="flex flex-wrap items-center justify-center gap-2">
+                      <button
+                        onClick={() => {
+                          setVideoError(null);
+                          if (videoElementRef.current) {
+                            videoElementRef.current.load();
+                            videoElementRef.current.play().catch(() => {});
+                          }
+                        }}
+                        className="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-black shadow-lg"
+                      >
+                        إعادة المحاولة ↺
+                      </button>
+                      <button
+                        onClick={() => setShowDownloadModal(true)}
+                        className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-rose-300 border border-rose-500/30 text-xs font-black shadow-lg"
+                      >
+                        حفظ الفيديو على هاتفك 📲
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
             ) : (
               /* Mode 2: Interactive Real-time Canvas with Large Synced Karaoke Subtitles */
               <>
@@ -743,6 +784,13 @@ export default function App() {
 
       {showPosterModal && (
         <PosterModal onClose={() => setShowPosterModal(false)} />
+      )}
+
+      {showDownloadModal && (
+        <VideoDownloadModal
+          isOpen={showDownloadModal}
+          onClose={() => setShowDownloadModal(false)}
+        />
       )}
     </div>
   );

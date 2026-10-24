@@ -117,7 +117,7 @@ fs.mkdirSync(path.dirname(finalOutput), { recursive: true });
 const soundtrack = path.resolve("public/assets/audio/rt_lab_master_soundtrack.mp3");
 
 execSync(
-  `ffmpeg -y -i "${concatenatedVideo}" -i "${soundtrack}" -c:v copy -c:a aac -b:a 192k -shortest "${finalOutput}"`,
+  `ffmpeg -y -i "${concatenatedVideo}" -i "${soundtrack}" -c:v copy -c:a aac -ar 44100 -b:a 192k -movflags +faststart -shortest "${finalOutput}"`,
   { stdio: "inherit" }
 );
 

@@ -90,17 +90,41 @@ export class RTVideoRecorderService {
     });
   }
 
-  public downloadVideo(blob: Blob, filename = "RT-Lab-21st-Anniversary-Promo.webm") {
+  public async downloadVideo(blob: Blob, filename = "RT-Lab-21st-Anniversary-Custom.mp4") {
+    const isMobile =
+      typeof navigator !== "undefined" &&
+      /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+    const isMp4 = blob.type.includes("mp4");
+    const ext = isMp4 ? "mp4" : "webm";
+    const actualFilename = filename.replace(/\.(webm|mp4)$/i, "") + `.${ext}`;
+
+    try {
+      if (isMobile && navigator.canShare) {
+        const file = new File([blob], actualFilename, { type: blob.type || "video/mp4" });
+        if (navigator.canShare({ files: [file] })) {
+          await navigator.share({
+            title: "إعلان معامل رامي مختار RT",
+            text: "فيديو المشاهد المخصصة - معامل رامي مختار RT للتحاليل الطبية",
+            files: [file],
+          });
+          return;
+        }
+      }
+    } catch (e) {
+      console.warn("Mobile share not completed, falling back to blob URL:", e);
+    }
+
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = filename;
+    a.download = actualFilename;
     document.body.appendChild(a);
     a.click();
     setTimeout(() => {
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-    }, 1000);
+    }, 2000);
   }
 
   public getIsRecording(): boolean {
