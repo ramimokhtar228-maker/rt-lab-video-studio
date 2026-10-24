@@ -2,13 +2,13 @@ const { execSync } = require("child_process");
 const fs = require("fs");
 const path = require("path");
 
-console.log("=== Starting RT LAB Final Commercial Rendering ===");
+console.log("=== Starting RT LAB Final Commercial Re-Rendering ===");
 
 const scenes = [
   {
     id: "scene1",
     img: "public/assets/aistudio/IMG_20261024_095029_246_b7abdac4.jpg",
-    dur: 11.0,
+    dur: 11.88,
     badge: "معامل رامي مختار RT الطبية",
     title: "تحية تقدير وإعزاز لعملائنا الكرام",
     sub: "أنتم شركاء النجاح والصحة.. نسعد دائماً برعايتكم وخدمتكم الطبية",
@@ -18,27 +18,27 @@ const scenes = [
   {
     id: "scene2",
     img: "public/assets/aistudio/IMG_20261024_094906_069_9b5d947e.jpg",
-    dur: 15.5,
+    dur: 13.00,
     badge: "2005 - 2026 • 21 عاماً من التميز والريادة",
     title: "بمناسبة مرور 21 عاماً على إنشاء معامل RT",
-    sub: "تحتفل معامل رامي مختار RT بعيد ميلادها الـ 21 مع عملائها الأعزاء",
+    sub: "تحتفل معامل رامي مختار بعيد ميلادها الحادي والعشرين معكم",
     boxColor: "#3b0717@0.88",
     zoom: "min(zoom+0.0003,1.10)",
   },
   {
     id: "scene3",
     img: "public/assets/aistudio/IMG_20261024_095022_303_91099514.jpg",
-    dur: 11.5,
+    dur: 14.08,
     badge: "هدية عيد الميلاد الـ 21 • خصم حتى 90%",
     title: "خصم يصل إلى 90% على جميع التحاليل الطبية",
-    sub: "أقوى عروض العام • هدية خاصة لعملائنا الكرام لفترة محدودة",
+    sub: "ونقدم لعملائنا الكرام خصم يصل إلى 90% على كافة التحاليل والفحوصات",
     boxColor: "#500724@0.88",
     zoom: "min(zoom+0.0004,1.10)",
   },
   {
     id: "scene4",
     img: "public/assets/aistudio/IMG_20261024_095029_576_cbc318b7.jpg",
-    dur: 13.5,
+    dur: 13.96,
     badge: "أدق نتائج مخبرية • أجهزة أوتوماتيكية متطورة",
     title: "أحدث التقنيات وأدق النتائج المخبرية",
     sub: "أعلى معايير الجودة الطبية وفريق متكامل وسحب منزلي مريح",
@@ -48,10 +48,10 @@ const scenes = [
   {
     id: "scene5",
     img: "public/assets/aistudio/IMG_20261024_095022_746_25e09e09.jpg",
-    dur: 22.5,
+    dur: 27.60,
     badge: "فريق طبي استشاري • سحب منزلي مجاني فوري",
     title: "نخبة من الأطباء والاستشاريين في خدمتكم دائماً",
-    sub: "للحجز والاستفسار اتصل بنا: 01100874444 أو 01100046841",
+    sub: "للحجز: 01100874444 - 01100046841 • معامل رامي مختار تتمنى لكم دوام الصحة",
     boxColor: "#1e1b4b@0.88",
     zoom: "min(zoom+0.0002,1.08)",
   },
@@ -88,8 +88,8 @@ scenes.forEach((sc, idx) => {
     // Lower third border accent
     `drawbox=x=70:y=525:w=1140:h=150:color=#fb7185@0.4:t=2`,
     // Scene badge pill
-    `drawbox=x=1280-70-380:y=490:w=380:h=42:color=#e11d48:t=fill`,
-    `drawtext=fontfile=${fontPath}:text_shaping=1:text='${sc.badge}':fontcolor=white:fontsize=18:x=1280-70-380+(380-text_w)/2:y=500`,
+    `drawbox=x=1280-70-420:y=490:w=420:h=42:color=#e11d48:t=fill`,
+    `drawtext=fontfile=${fontPath}:text_shaping=1:text='${sc.badge}':fontcolor=white:fontsize=18:x=1280-70-420+(420-text_w)/2:y=500`,
     // Scene title
     `drawtext=fontfile=${fontPath}:text_shaping=1:text='${sc.title}':fontcolor=white:fontsize=36:x=(1280-text_w)/2:y=545`,
     // Scene subtitle
