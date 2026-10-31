@@ -1,0 +1,6 @@
+{
+  "name": "RT LAB Video Ad Studio",
+  "description": "استوديو الإعلان المرئي والصوتي التفاعلي لمعامل رامي مختار RT LAB - إعلان الفحص الشامل المخفض مع صوت وموسيقى رقيقة وباقات الفحص والحجز المباشر",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
