@@ -28,16 +28,24 @@ import {
   Volume2,
   Music,
   Mic,
+  Layers,
+  Image as ImageIcon,
 } from "lucide-react";
 
 import {
   DEFAULT_SCENES,
   COMPREHENSIVE_CHECKUP_SCENES,
-  ANNIVERSARY_21_SCENES,
 } from "./data/defaultScenes";
+import { PackagesExplorer } from "./components/PackagesExplorer";
+import { PhotoGallery } from "./components/PhotoGallery";
+import { QuickBookingModal } from "./components/QuickBookingModal";
+import { MedicalPackage, PHONE_NUMBERS } from "./data/adData";
 
 export default function App() {
-  const [activeCampaign, setActiveCampaign] = useState<"checkup" | "anniversary">("checkup");
+  const activeCampaign = "checkup" as const;
+  const [activeTab, setActiveTab] = useState<"video" | "packages" | "gallery">("video");
+  const [showBookingModal, setShowBookingModal] = useState<boolean>(false);
+  const [selectedBookingPackage, setSelectedBookingPackage] = useState<MedicalPackage | null>(null);
 
   const [scenes, setScenes] = useState<VideoScene[]>(() => {
     try {
@@ -92,34 +100,7 @@ export default function App() {
   const totalDuration = scenes.reduce((acc, s) => acc + s.duration, 0);
 
   const getContinuousAudioSrc = () => {
-    if (activeCampaign === "checkup") {
-      return "./assets/audio/gentle_music.mp3";
-    }
-    const isEgyptian = voiceSettings.dialect === "egyptian" || voiceSettings.persona.startsWith("egyptian-");
-    return isEgyptian
-      ? "./assets/audio/rt_lab_egyptian_master_soundtrack.mp3?v=20261024"
-      : "./assets/audio/rt_lab_master_soundtrack.mp3?v=20261024";
-  };
-
-  const handleSwitchCampaign = (camp: "checkup" | "anniversary") => {
-    setActiveCampaign(camp);
-    speechService.stop();
-    if (isPlaying) {
-      if (masterAudioRef.current) masterAudioRef.current.pause();
-      if (videoElementRef.current) videoElementRef.current.pause();
-      setIsPlaying(false);
-      setIsVoiceActive(false);
-    }
-    if (camp === "checkup") {
-      setScenes(COMPREHENSIVE_CHECKUP_SCENES);
-      setViewMode("interactive");
-    } else {
-      setScenes(ANNIVERSARY_21_SCENES);
-      setViewMode("video-mp4");
-    }
-    setCurrentTime(0);
-    setCurrentSceneIndex(0);
-    studioAudio.playClickSound();
+    return "./assets/audio/gentle_music.mp3";
   };
 
   // Initialize master audio element for seamless synchronized studio playback
@@ -451,23 +432,59 @@ export default function App() {
                 <h1 className="text-lg font-black text-white tracking-wide">
                   معامل RT للتحاليل الطبية
                 </h1>
-                <span className="bg-gradient-to-r from-amber-500 to-rose-500 text-slate-950 font-black text-[10px] px-2 py-0.5 rounded-full shadow">
-                  {activeCampaign === "checkup" ? "★ الفحص الشامل المخفض قريباً ★" : "★ 21st ANNIVERSARY ★"}
+                <span className="bg-gradient-to-r from-amber-500 to-rose-500 text-slate-950 font-black text-[10px] px-2.5 py-0.5 rounded-full shadow">
+                  ★ عروض الفحص الشامل المخفض قريباً ★
                 </span>
               </div>
               <p className="text-xs text-rose-300 font-semibold flex items-center gap-2">
                 <span>
-                  {activeCampaign === "checkup"
-                    ? "إعلان 3 باقات فحص شامل تناسب جميع الأعمار • عامية مصرية"
-                    : "إعلان فيديو متواصل • صوت واضح وموسيقى رقيقة"}
+                  إعلان 3 باقات فحص شامل تناسب جميع الأعمار • عامية مصرية وفصحى
                 </span>
                 <span className="text-slate-500">•</span>
                 <span className="text-amber-400 font-bold">
-                  {activeCampaign === "checkup" ? "3 باقات مخفضة" : "خصم يصل إلى 90%"}
+                  3 باقات مخفضة • سحب منزلي مجاني
                 </span>
               </p>
             </div>
           </div>
+
+          {/* Navigation Tab Pills in Header */}
+          <nav className="flex items-center gap-1.5 bg-slate-900/90 p-1.5 rounded-xl border border-slate-800">
+            <button
+              onClick={() => setActiveTab("video")}
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all ${
+                activeTab === "video"
+                  ? "bg-rose-600 text-white shadow-md shadow-rose-950"
+                  : "text-slate-400 hover:text-white"
+              }`}
+            >
+              <Video className="w-3.5 h-3.5" />
+              <span>مشغل الإعلان والأستوديو</span>
+            </button>
+            <button
+              onClick={() => setActiveTab("packages")}
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all ${
+                activeTab === "packages"
+                  ? "bg-rose-600 text-white shadow-md shadow-rose-950"
+                  : "text-slate-400 hover:text-white"
+              }`}
+            >
+              <Layers className="w-3.5 h-3.5 text-amber-300" />
+              <span>باقات الفحص الـ 3</span>
+              <span className="text-[10px] bg-amber-400/20 text-amber-300 px-1 rounded font-bold">55%</span>
+            </button>
+            <button
+              onClick={() => setActiveTab("gallery")}
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all ${
+                activeTab === "gallery"
+                  ? "bg-rose-600 text-white shadow-md shadow-rose-950"
+                  : "text-slate-400 hover:text-white"
+              }`}
+            >
+              <ImageIcon className="w-3.5 h-3.5" />
+              <span>صور وفروع المعمل (13)</span>
+            </button>
+          </nav>
 
           {/* Quick Action Buttons */}
           <div className="flex items-center gap-2 flex-wrap">
@@ -489,9 +506,7 @@ export default function App() {
 
             <a
               href={`https://wa.me/201100874444?text=${encodeURIComponent(
-                activeCampaign === "checkup"
-                  ? "مرحباً معامل رامي مختار RT LAB، أود الاستفسار والحجز المسبق لعروض الفحص الشامل المخفض بـ 3 باقات."
-                  : "مرحباً معامل RT، أرغب في الاستفادة من خصم الـ 90% بمناسبة مرور 21 عاماً"
+                "مرحباً معامل رامي مختار RT LAB، أود الاستفسار والحجز المسبق لعروض الفحص الشامل المخفض بـ 3 باقات."
               )}`}
               target="_blank"
               rel="noopener noreferrer"
@@ -502,12 +517,15 @@ export default function App() {
             </a>
 
             <button
-              onClick={downloadDirectMP4}
+              onClick={() => {
+                setSelectedBookingPackage(null);
+                setShowBookingModal(true);
+              }}
               className="bg-gradient-to-r from-rose-600 to-rose-700 hover:from-rose-500 hover:to-rose-600 text-white px-3.5 py-1.5 rounded-xl text-xs font-black flex items-center gap-1.5 shadow-lg shadow-rose-950 transition-all animate-pulse"
-              title="تحميل ملف الفيديو بصيغة MP4 مباشرة لإرساله للعملاء"
+              title="احجز مكانك في الخصم المسبق"
             >
-              <Download className="w-4 h-4" />
-              تحميل الفيديو (MP4) 🎬
+              <Sparkles className="w-4 h-4 text-amber-300" />
+              احجز الفحص الشامل 🩺
             </button>
           </div>
         </div>
@@ -515,45 +533,28 @@ export default function App() {
 
       {/* Main Content Area */}
       <main className="flex-1 max-w-7xl w-full mx-auto p-4 space-y-6">
-        {/* Campaign Switcher Bar */}
-        <div className="flex flex-wrap items-center justify-between gap-3 bg-slate-900/90 border border-slate-800 p-2.5 rounded-2xl shadow-md">
+        {/* Campaign Status Bar - Birthday ad removed, Comprehensive Checkup locked and active */}
+        <div className="flex flex-wrap items-center justify-between gap-3 bg-slate-900/90 border border-slate-800 p-3 rounded-2xl shadow-md">
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-xs font-bold text-slate-300">اختر الإعلان المطلوب تشغيله:</span>
-            <button
-              onClick={() => handleSwitchCampaign("checkup")}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-black flex items-center gap-1.5 transition-all ${
-                activeCampaign === "checkup"
-                  ? "bg-gradient-to-r from-red-600 to-rose-600 text-white shadow-lg shadow-red-950"
-                  : "text-slate-400 hover:text-white bg-slate-950 border border-slate-800"
-              }`}
-            >
+            <span className="text-xs font-bold text-emerald-400 flex items-center gap-1.5">
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
+              الإعلان النشط والمفعل حالياً:
+            </span>
+            <div className="px-4 py-1.5 rounded-xl text-xs font-black flex items-center gap-2 bg-gradient-to-r from-red-600 to-rose-600 text-white shadow-lg shadow-red-950 border border-rose-400/30">
               <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-              <span>🩺 إعلان الفحص الشامل المخفض (3 باقات - الجديد بالعامية المصرية)</span>
-              <span className="bg-amber-400 text-slate-950 text-[10px] px-1.5 py-0.2 rounded-full font-black">
-                جديد ومفعل
+              <span>🩺 إعلان قرب نزول الفحص الشامل المخفض (3 باقات متكاملة • بالعامية المصرية والفصحى)</span>
+              <span className="bg-amber-400 text-slate-950 text-[10px] px-2 py-0.5 rounded-full font-black">
+                مفعل رسمياً
               </span>
-            </button>
-
-            <button
-              onClick={() => handleSwitchCampaign("anniversary")}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all ${
-                activeCampaign === "anniversary"
-                  ? "bg-gradient-to-r from-amber-600 to-rose-600 text-white shadow-lg"
-                  : "text-slate-400 hover:text-white bg-slate-950 border border-slate-800"
-              }`}
-            >
-              <span>🎂 إعلان عيد الميلاد الـ 21 (السابق)</span>
-            </button>
+            </div>
           </div>
 
-          <div className="text-xs text-slate-400">
-            {activeCampaign === "checkup"
-              ? "يستخدم الصور الجديدة وباقات الفحص الـ 3 والكلمات بالعامية المصرية"
-              : "إعلان مناسبة 21 سنة"}
+          <div className="flex items-center gap-2 text-xs text-slate-400">
+            <span>يشمل 3 باقات: الأساسية، المتقدمة، وباقة كبار السن والعائلة مع سحب منزلي مجاني</span>
           </div>
         </div>
 
-        {/* Celebration Banner & Mode Selector */}
+        {/* Celebration Banner & Controls */}
         <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-rose-950 via-slate-900 to-amber-950 border border-rose-500/30 p-4 shadow-xl">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-3">
@@ -563,60 +564,59 @@ export default function App() {
               <div>
                 <div className="flex items-center gap-2">
                   <span className="text-amber-400 font-black text-sm">
-                    {activeCampaign === "checkup"
-                      ? "إعلان قرب نزول الفحص الشامل المخفض من معامل RT"
-                      : "إعلان عيد ميلاد معامل RT الحادي والعشرين (2005 - 2026)"}
+                    إعلان قرب نزول الفحص الشامل المخفض من معامل RT
                   </span>
                   <span className="bg-rose-600 text-white font-extrabold text-[11px] px-2.5 py-0.5 rounded-full shadow">
-                    {activeCampaign === "checkup" ? "3 باقات تناسب كل الأعمار" : "خصم يصل إلى 90%"}
+                    3 باقات تناسب كل الأعمار • خصومات تصل إلى 55%
                   </span>
                 </div>
                 <p className="text-xs text-slate-300 mt-0.5">
-                  {activeCampaign === "checkup"
-                    ? "إعلان توضيحي مشوق بالعامية المصرية وباقات الفحص الـ 3 (الأساسية، المتقدمة، الذهبية) مع صوت واضح وموسيقى رقيقة هادئة"
-                    : "فيديو متواصل ومكتمل بدون أي تأخير بين الصور مع صوت إلقاء واضح وموسيقى رقيقة وكلام مكتوب بدقة فائقة"}
+                  إعلان توضيحي مشوق بالعامية المصرية وباقات الفحص الـ 3 (الأساسية، المتقدمة، الذهبية) مع صوت واضح وموسيقى رقيقة هادئة وسحب منزلي مجاني
                 </p>
               </div>
             </div>
 
-            {/* Mode Selector Tabs */}
-            <div className="flex items-center gap-1.5 bg-slate-950/90 p-1.5 rounded-xl border border-slate-800">
+            {/* Quick Actions in Banner */}
+            <div className="flex items-center gap-2">
               <button
-                onClick={() => {
-                  setViewMode("video-mp4");
-                  setIsPlaying(false);
-                  if (masterAudioRef.current) masterAudioRef.current.pause();
-                }}
-                className={`px-3.5 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all ${
-                  viewMode === "video-mp4"
-                    ? "bg-rose-600 text-white shadow-md shadow-rose-950"
-                    : "text-slate-400 hover:text-white"
-                }`}
+                onClick={() => setShowPosterModal(true)}
+                className="px-3.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-amber-300 border border-amber-500/30 font-bold text-xs flex items-center gap-1.5 transition-all shadow"
               >
-                <Film className="w-3.5 h-3.5" />
-                فيديو العرض المباشر (MP4)
+                <Share2 className="w-3.5 h-3.5 text-amber-400" />
+                بوستر الإعلان للواتساب
               </button>
               <button
-                onClick={() => {
-                  setViewMode("interactive");
-                  setIsPlaying(false);
-                  if (videoElementRef.current) videoElementRef.current.pause();
-                }}
-                className={`px-3.5 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all ${
-                  viewMode === "interactive"
-                    ? "bg-rose-600 text-white shadow-md shadow-rose-950"
-                    : "text-slate-400 hover:text-white"
-                }`}
+                onClick={() => setShowDownloadModal(true)}
+                className="px-3.5 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs flex items-center gap-1.5 transition-all shadow"
               >
-                <Sliders className="w-3.5 h-3.5" />
-                الاستوديو التفاعلي بالكلمات المتزامنة
+                <Download className="w-3.5 h-3.5" />
+                خيارات التنزيل والحفظ 📲
               </button>
             </div>
           </div>
         </div>
 
-        {/* Custom scenes active indicator */}
-        {hasCustomScenes && (
+        {activeTab === "packages" && (
+          <PackagesExplorer
+            onSelectPackageForBooking={(pkg) => {
+              setSelectedBookingPackage(pkg);
+              setShowBookingModal(true);
+            }}
+          />
+        )}
+
+        {activeTab === "gallery" && (
+          <PhotoGallery
+            onPlayImageInVideo={() => {
+              setActiveTab("video");
+            }}
+          />
+        )}
+
+        {activeTab === "video" && (
+          <>
+            {/* Custom scenes active indicator */}
+            {hasCustomScenes && (
           <div className="bg-emerald-950/80 border border-emerald-500/50 rounded-2xl p-3.5 flex items-center justify-between text-xs text-emerald-200 shadow-lg animate-in fade-in">
             <div className="flex items-center gap-2">
               <CheckCircle className="w-4 h-4 text-emerald-400" />
@@ -1029,39 +1029,49 @@ export default function App() {
             </a>
           </div>
         </div>
-      </main>
+      </>
+    )}
+  </main>
 
-      {/* Footer */}
-      <footer className="mt-8 border-t border-slate-900 bg-slate-950 py-6 px-4 text-center text-xs text-slate-500">
-        <p>
-          معامل RT للتحاليل الطبية • 21 عاماً من الثقة والدقة والرعاية الصحية الفائقة (2005 - 2026)
-        </p>
-        <p className="mt-1 text-slate-600">
-          استوديو إعلانات الفيديو الرقمي • جميع الحقوق محفوظة لمعامل RT
-        </p>
-      </footer>
+  {/* Footer */}
+  <footer className="mt-8 border-t border-slate-900 bg-slate-950 py-6 px-4 text-center text-xs text-slate-500">
+    <p>
+      معامل رامي مختار RT للتحاليل الطبية • دقة • ثقة • رعاية صحية فائقة لجميع أفراد الأسرة
+    </p>
+    <p className="mt-1 text-slate-600">
+      استوديو ومصمم إعلانات الفيديو الرقمية • حملة الفحص الشامل المخفض بـ 3 باقات متكاملة
+    </p>
+  </footer>
 
-      {/* Modals */}
-      {editingScene && (
-        <SceneEditModal
-          scene={editingScene}
-          voiceSettings={voiceSettings}
-          onClose={() => setEditingScene(null)}
-          onSave={handleUpdateScene}
-        />
-      )}
+  {/* Modals */}
+  {editingScene && (
+    <SceneEditModal
+      scene={editingScene}
+      voiceSettings={voiceSettings}
+      onClose={() => setEditingScene(null)}
+      onSave={handleUpdateScene}
+    />
+  )}
 
-      {showPosterModal && (
-        <PosterModal onClose={() => setShowPosterModal(false)} />
-      )}
+  {showPosterModal && (
+    <PosterModal onClose={() => setShowPosterModal(false)} />
+  )}
 
-      {showDownloadModal && (
-        <VideoDownloadModal
-          isOpen={showDownloadModal}
-          onClose={() => setShowDownloadModal(false)}
-          defaultDialect={isEgyptianActive ? "egyptian" : "standard"}
-        />
-      )}
-    </div>
+  {showDownloadModal && (
+    <VideoDownloadModal
+      isOpen={showDownloadModal}
+      onClose={() => setShowDownloadModal(false)}
+      defaultDialect={isEgyptianActive ? "egyptian" : "standard"}
+    />
+  )}
+
+  {showBookingModal && (
+    <QuickBookingModal
+      isOpen={showBookingModal}
+      onClose={() => setShowBookingModal(false)}
+      defaultPackage={selectedBookingPackage}
+    />
+  )}
+</div>
   );
 }

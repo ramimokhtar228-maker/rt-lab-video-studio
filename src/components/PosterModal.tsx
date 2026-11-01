@@ -1,5 +1,5 @@
-import React, { useRef, useState } from "react";
-import { X, Download, Share2, Check, PhoneCall, Sparkles } from "lucide-react";
+import React, { useState } from "react";
+import { X, Download, Share2, Check, Sparkles } from "lucide-react";
 
 interface PosterModalProps {
   onClose: () => void;
@@ -12,14 +12,14 @@ export const PosterModal: React.FC<PosterModalProps> = ({ onClose }) => {
   const phone1 = "01100874444";
   const phone2 = "01100046841";
 
-  const shareText = `🎉 تحتفل معامل RT للتحاليل الطبية بعيد ميلادها الـ 21!
-بمناسبة مرور 21 عاماً على التأسيس، بنقدملكم خصم استثنائي يصل إلى 90% على جميع التحاليل والفحوصات الطبية هدية لعملائنا الكرام!
+  const shareText = `🩺 ترقبوا قريباً: أقوى عروض الفحص الشامل المخفض من معامل رامي مختار RT LAB!
+3 باقات ذكية متكاملة تناسب جميع أفراد الأسرة (الأساسية للاطمئنان السريع - المتقدمة الشاملة - الذهبية لكبار السن والعائلة) بخصومات حصرية تصل إلى 55%، مع سحب منزلي مجاني وفريق طبي متخصص.
 📞 للتواصل والحجز السريع وسحب العينات المنزلي:
 ${phone1}
 ${phone2}
-معامل RT - دقة، سرعة، وأعلى جودة طبية.`;
+معامل RT - دقة متناهية • أجهزة مؤتمتة 100% • رعاية تليق بصحتك.`;
 
-  const copyAnniversaryText = () => {
+  const copyShareText = () => {
     navigator.clipboard.writeText(shareText);
     setCopied(true);
     setTimeout(() => setCopied(false), 2500);
@@ -36,35 +36,35 @@ ${phone2}
 
     // Background gradient
     const bg = ctx.createLinearGradient(0, 0, 0, canvas.height);
-    bg.addColorStop(0, "#3b0716");
-    bg.addColorStop(0.5, "#17020a");
-    bg.addColorStop(1, "#080104");
+    bg.addColorStop(0, "#450a0a");
+    bg.addColorStop(0.5, "#0f172a");
+    bg.addColorStop(1, "#020617");
     ctx.fillStyle = bg;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Header Badge
-    ctx.fillStyle = "#e11d48";
-    ctx.fillRect(0, 0, canvas.width, 16);
+    // Header Stripe
+    ctx.fillStyle = "#dc2626";
+    ctx.fillRect(0, 0, canvas.width, 18);
 
     ctx.textAlign = "center";
     ctx.fillStyle = "#fbbf24";
     ctx.font = "bold 32px 'Cairo', sans-serif";
-    ctx.fillText("★ احتفالية مرور 21 عاماً من التميز الطبي (2005 - 2026) ★", canvas.width / 2, isStory ? 120 : 90);
+    ctx.fillText("★ قريباً: عروض الفحص الشامل المخفض من معامل RT ★", canvas.width / 2, isStory ? 120 : 90);
 
     ctx.fillStyle = "#ffffff";
     ctx.font = "900 64px 'Cairo', sans-serif";
-    ctx.fillText("معامل RT للتحاليل الطبية", canvas.width / 2, isStory ? 210 : 170);
+    ctx.fillText("معامل رامي مختار RT LAB", canvas.width / 2, isStory ? 210 : 170);
 
-    ctx.fillStyle = "#fb7185";
-    ctx.font = "bold 32px 'Cairo', sans-serif";
-    ctx.fillText("تحتفل بعيد ميلادها الـ 21 مع عملائها الكرام", canvas.width / 2, isStory ? 280 : 230);
+    ctx.fillStyle = "#f87171";
+    ctx.font = "bold 34px 'Cairo', sans-serif";
+    ctx.fillText("3 باقات فحص ذكية ومدروسة تناسب كل الأعمار", canvas.width / 2, isStory ? 280 : 230);
 
-    // 90% Discount Badge
+    // Discount Badge Circle
     const badgeY = isStory ? 580 : 450;
     const rad = ctx.createRadialGradient(canvas.width / 2, badgeY, 20, canvas.width / 2, badgeY, 240);
     rad.addColorStop(0, "#fbbf24");
-    rad.addColorStop(0.6, "#e11d48");
-    rad.addColorStop(1, "#881337");
+    rad.addColorStop(0.6, "#dc2626");
+    rad.addColorStop(1, "#7f1d1d");
     ctx.fillStyle = rad;
     ctx.beginPath();
     ctx.arc(canvas.width / 2, badgeY, 210, 0, Math.PI * 2);
@@ -74,68 +74,70 @@ ${phone2}
     ctx.stroke();
 
     ctx.fillStyle = "#ffffff";
-    ctx.font = "bold 44px 'Cairo', sans-serif";
-    ctx.fillText("خصم يصل إلى", canvas.width / 2, badgeY - 80);
+    ctx.font = "bold 42px 'Cairo', sans-serif";
+    ctx.fillText("خصومات تصل إلى", canvas.width / 2, badgeY - 80);
 
     ctx.fillStyle = "#fef08a";
-    ctx.font = "900 140px 'Cairo', sans-serif";
-    ctx.fillText("90%", canvas.width / 2, badgeY + 45);
+    ctx.font = "900 136px 'Cairo', sans-serif";
+    ctx.fillText("55%", canvas.width / 2, badgeY + 45);
 
     ctx.fillStyle = "#ffffff";
     ctx.font = "bold 34px 'Cairo', sans-serif";
-    ctx.fillText("على جميع التحاليل الطبية", canvas.width / 2, badgeY + 125);
+    ctx.fillText("على باقات الفحص الشامل", canvas.width / 2, badgeY + 125);
 
     // Callout Box
-    const boxY = isStory ? 1040 : 750;
+    const boxY = isStory ? 1020 : 740;
     ctx.fillStyle = "rgba(255, 255, 255, 0.08)";
-    ctx.strokeStyle = "#fb7185";
+    ctx.strokeStyle = "#f87171";
     ctx.lineWidth = 3;
     ctx.beginPath();
-    ctx.roundRect(80, boxY, canvas.width - 160, isStory ? 340 : 160, 30);
+    ctx.roundRect(80, boxY, canvas.width - 160, isStory ? 360 : 170, 30);
     ctx.fill();
     ctx.stroke();
 
     ctx.fillStyle = "#fde047";
     ctx.font = "bold 36px 'Cairo', sans-serif";
-    ctx.fillText("🎁 هدية خاصة لعملائنا الكرام لفترة محدودة", canvas.width / 2, boxY + 65);
+    ctx.fillText("🩺 مميزات باقات الفحص الشامل من RT LAB", canvas.width / 2, boxY + 65);
 
     ctx.fillStyle = "#ffffff";
     ctx.font = "600 28px 'Cairo', sans-serif";
-    ctx.fillText("• سحب عينات منزلي مجاني لجميع مناطق الخدمة", canvas.width / 2, boxY + 125);
+    ctx.fillText("• 3 باقات ذكية: الأساسية، المتقدمة، وباقة كبار السن والعائلة", canvas.width / 2, boxY + 125);
+
     if (isStory) {
-      ctx.fillText("• أحدث الأجهزة المعملية وأعلى درجات الدقة والسرعة", canvas.width / 2, boxY + 185);
-      ctx.fillText("• إرسال النتائج فور صدورها عبر تطبيق الواتساب", canvas.width / 2, boxY + 245);
+      ctx.fillText("• سحب عينات منزلي مجاني وسريع أينما كنت بدون أي رسوم", canvas.width / 2, boxY + 185);
+      ctx.fillText("• أحدث أجهزة التحاليل الرقمية الألمانية والأمريكية بدقة 100%", canvas.width / 2, boxY + 245);
+      ctx.fillText("• إرسال النتائج المعتمدة إلكترونياً على هاتفك فور صدورها", canvas.width / 2, boxY + 305);
     }
 
     // Contact Footer
-    const footY = isStory ? 1540 : 960;
+    const footY = isStory ? 1520 : 950;
     ctx.fillStyle = "rgba(16, 185, 129, 0.2)";
     ctx.strokeStyle = "#10b981";
     ctx.lineWidth = 4;
     ctx.beginPath();
-    ctx.roundRect(80, footY, canvas.width - 160, isStory ? 240 : 90, 30);
+    ctx.roundRect(80, footY, canvas.width - 160, isStory ? 240 : 100, 30);
     ctx.fill();
     ctx.stroke();
 
     ctx.fillStyle = "#34d399";
     ctx.font = "bold 34px 'Cairo', sans-serif";
-    ctx.fillText("📞 للتواصل والحجز والاستعلام:", canvas.width / 2, footY + (isStory ? 60 : 40));
+    ctx.fillText("📞 للحجز المسبق وطلب السحب المنزلي:", canvas.width / 2, footY + (isStory ? 60 : 40));
 
     ctx.fillStyle = "#ffffff";
     ctx.font = "900 52px 'Readex Pro', sans-serif";
-    ctx.fillText(`${phone1}  -  ${phone2}`, canvas.width / 2, footY + (isStory ? 140 : 75));
+    ctx.fillText(`${phone1}  -  ${phone2}`, canvas.width / 2, footY + (isStory ? 140 : 80));
 
     if (isStory) {
       ctx.fillStyle = "#a7f3d0";
       ctx.font = "bold 28px 'Cairo', sans-serif";
-      ctx.fillText("خدمة متواصلة على مدار 24 ساعة للرد على استفساراتكم", canvas.width / 2, footY + 205);
+      ctx.fillText("خدمة متواصلة على مدار الساعة للرد على كافة استفساراتكم", canvas.width / 2, footY + 205);
     }
 
     // Trigger download
     const url = canvas.toDataURL("image/png");
     const a = document.createElement("a");
     a.href = url;
-    a.download = `RT-Lab-21st-Anniversary-Poster-${format}.png`;
+    a.download = `RT-Lab-Comprehensive-Checkup-Poster-${format}.png`;
     document.body.appendChild(a);
     a.click();
     setTimeout(() => {
@@ -151,7 +153,7 @@ ${phone2}
           <div>
             <h3 className="text-xl font-black text-white flex items-center gap-2">
               <Sparkles className="w-5 h-5 text-amber-400" />
-              بوستر إعلان عيد الميلاد الـ 21 لمعامل RT
+              بوستر إعلان الفحص الشامل المخفض لمعامل RT
             </h3>
             <p className="text-xs text-slate-400">
               جاهز للتحميل بجودة فائقة ونشره كحالة واتساب أو منشور فيسبوك وإنستغرام
@@ -190,26 +192,26 @@ ${phone2}
         </div>
 
         {/* Live Preview Card */}
-        <div className="bg-gradient-to-b from-rose-950 via-slate-950 to-black p-6 rounded-2xl border border-rose-900/40 text-center space-y-4 shadow-inner">
+        <div className="bg-gradient-to-b from-red-950 via-slate-950 to-black p-6 rounded-2xl border border-red-900/40 text-center space-y-4 shadow-inner">
           <div className="inline-block bg-amber-500 text-slate-950 font-black text-xs px-3 py-1 rounded-full shadow">
-            ★ 21st ANNIVERSARY (2005 - 2026) ★
+            ★ COMPREHENSIVE CHECKUP 2026 ★
           </div>
 
           <h2 className="text-2xl font-black text-white">معامل RT للتحاليل الطبية</h2>
           <p className="text-sm text-rose-300 font-semibold">
-            تحتفل بعيد ميلادها الـ 21 مع عملائها الكرام
+            3 باقات فحص شامل ذكية تناسب كل الأعمار
           </p>
 
-          <div className="w-40 h-40 mx-auto rounded-full bg-gradient-to-tr from-rose-600 to-amber-500 p-1 flex items-center justify-center shadow-xl shadow-rose-950">
+          <div className="w-40 h-40 mx-auto rounded-full bg-gradient-to-tr from-red-600 to-amber-500 p-1 flex items-center justify-center shadow-xl shadow-red-950">
             <div className="w-full h-full rounded-full bg-slate-950 flex flex-col items-center justify-center">
               <span className="text-xs text-white font-bold">خصم يصل إلى</span>
-              <span className="text-4xl font-black text-amber-400">90%</span>
-              <span className="text-[11px] text-rose-300 font-bold">على جميع التحاليل</span>
+              <span className="text-4xl font-black text-amber-400">55%</span>
+              <span className="text-[11px] text-rose-300 font-bold">على باقات الفحص الشامل</span>
             </div>
           </div>
 
           <div className="bg-emerald-950/40 border border-emerald-500/40 rounded-xl p-3 text-emerald-300 font-bold text-sm">
-            📞 للحجز والاستفسار: {phone1} • {phone2}
+            📞 للحجز المسبق: {phone1} • {phone2}
           </div>
         </div>
 
@@ -217,14 +219,14 @@ ${phone2}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <button
             onClick={handleDownloadImage}
-            className="py-3 px-4 rounded-xl bg-gradient-to-r from-rose-600 to-rose-700 hover:from-rose-500 hover:to-rose-600 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-rose-950 transition-all"
+            className="py-3 px-4 rounded-xl bg-gradient-to-r from-red-600 to-rose-700 hover:from-red-500 hover:to-rose-600 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-red-950 transition-all"
           >
             <Download className="w-4 h-4" />
             تحميل البوستر عالي الدقة (PNG)
           </button>
 
           <button
-            onClick={copyAnniversaryText}
+            onClick={copyShareText}
             className="py-3 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs flex items-center justify-center gap-2 border border-slate-700 transition-all"
           >
             {copied ? <Check className="w-4 h-4 text-emerald-400" /> : <Share2 className="w-4 h-4 text-rose-400" />}

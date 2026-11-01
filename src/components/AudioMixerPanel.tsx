@@ -117,8 +117,8 @@ export const AudioMixerPanel: React.FC<AudioMixerPanelProps> = ({
         await studioAudio.playVoiceAudio(persona.sampleAudioSrc);
       } else {
         const testText = persona.category === "egyptian"
-          ? "أهلاً بحضراتكم في معامل رامي مختار RT، بنقدملكم خصم بيوصل لحد 90% بمناسبة عيد ميلادنا الـ 21."
-          : "أهلاً وسهلاً بكم في معامل رامي مختار RT للتحاليل الطبية بمناسبة مرور 21 عاماً من التميز والريادة.";
+          ? "أهلاً بحضراتكم في معامل رامي مختار RT، بنقدملكم أقوى باقات الفحص الشامل المخفض لكل العيلة بأعلى دقة."
+          : "أهلاً وسهلاً بكم في معامل رامي مختار RT للتحاليل الطبية وعروض باقات الفحص الشامل الدوري والمتقدم.";
         await speechService.speakText(
           testText,
           {

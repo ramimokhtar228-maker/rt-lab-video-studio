@@ -358,7 +358,9 @@ export const VideoDownloadModal: React.FC<VideoDownloadModalProps> = ({
           </button>
 
           <a
-            href="https://api.whatsapp.com/send?phone=201100874444&text=%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%D9%8B%20%D9%85%D8%B9%D8%A7%D9%85%D9%84%20RT%D8%8C%20%D8%A3%D9%88%D8%AF%20%D8%A7%D9%84%D8%A7%D8%B3%D8%AA%D9%81%D8%B3%D8%A7%D8%B1%20%D8%B9%D9%86%20%D8%B9%D8%B1%D9%88%D8%B6%20%D8%B9%D9%8A%D8%AF%20%D8%A7%D9%84%D9%85%D9%8A%D9%84%D8%A7%D8%AF%20%D8%A7%D9%84%D9%80%2021%20%D9%88%D8%A7%D9%84%D8%AE%D8%B5%D9%85%20%D8%AD%D8%AA%D9%89%2090%25"
+            href={`https://api.whatsapp.com/send?phone=201100874444&text=${encodeURIComponent(
+              "مرحباً معامل RT، أود الاستفسار والحجز المسبق في عروض باقات الفحص الشامل المخفض."
+            )}`}
             target="_blank"
             rel="noopener noreferrer"
             className="px-3.5 py-2 rounded-xl bg-emerald-950/60 hover:bg-emerald-900/60 text-emerald-300 border border-emerald-500/30 text-xs font-bold flex items-center gap-1.5 transition-colors"

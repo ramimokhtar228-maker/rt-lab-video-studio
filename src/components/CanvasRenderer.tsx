@@ -544,11 +544,11 @@ export const CanvasRenderer: React.FC<CanvasRendererProps> = ({
 
     ctx.fillStyle = "#fef08a";
     ctx.font = "900 82px 'Cairo', sans-serif";
-    ctx.fillText("90%", 0, 15);
+    ctx.fillText("55%", 0, 15);
 
     ctx.fillStyle = "#ffffff";
     ctx.font = "bold 20px 'Cairo', sans-serif";
-    ctx.fillText("هدية عيد الميلاد", 0, 75);
+    ctx.fillText("الفحص الشامل", 0, 75);
 
     ctx.restore();
   };
