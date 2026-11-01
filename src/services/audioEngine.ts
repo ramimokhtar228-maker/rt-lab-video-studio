@@ -214,27 +214,9 @@ class AudioEngine {
   }
 
   /**
-   * Play heartbeat pulse sound effect for medical reassurance
-   */
   public playHeartbeatPulse() {
-    const ctx = this.ensureAudioContext();
-    if (!ctx) return;
-    const now = ctx.currentTime;
-    [0, 0.18].forEach((offset) => {
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(80, now + offset);
-      osc.frequency.exponentialRampToValueAtTime(45, now + offset + 0.12);
-
-      gain.gain.setValueAtTime(0.18, now + offset);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + offset + 0.14);
-
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start(now + offset);
-      osc.stop(now + offset + 0.15);
-    });
+    // Disabled per user request (no pulse sounds)
+    return;
   }
 
   /**

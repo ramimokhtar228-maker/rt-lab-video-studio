@@ -78,7 +78,7 @@ export default function App() {
   const [aspectRatio, setAspectRatio] = useState<AspectRatio>("16:9");
   const [isVoiceActive, setIsVoiceActive] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
-  const [viewMode, setViewMode] = useState<"video-mp4" | "interactive">("interactive");
+  const [viewMode, setViewMode] = useState<"video-mp4" | "interactive">("video-mp4");
 
   // Modals
   const [editingScene, setEditingScene] = useState<VideoScene | null>(null);
@@ -87,7 +87,7 @@ export default function App() {
   const [videoError, setVideoError] = useState<string | null>(null);
 
   // Voice & Music Settings
-  const [selectedMusicTrack, setSelectedMusicTrack] = useState<string>("egyptian-warm");
+  const [selectedMusicTrack, setSelectedMusicTrack] = useState<string>("soft-piano");
   const [voiceSettings, setVoiceSettings] = useState<VoiceSettings>({
     engine: "recorded",
     persona: "egyptian-mariam",
@@ -104,7 +104,7 @@ export default function App() {
   const totalDuration = scenes.reduce((acc, s) => acc + s.duration, 0);
 
   const getContinuousAudioSrc = () => {
-    return "./assets/audio/gentle_music.mp3";
+    return "./assets/audio/rt_lab_egyptian_master_soundtrack.mp3?v=20261101_piano_v7";
   };
 
   // Initialize master audio element for seamless synchronized studio playback
@@ -170,7 +170,7 @@ export default function App() {
   const { index: activeIndex, scene: currentScene, sceneProgress } = getCurrentSceneAndProgress();
 
   const isEgyptianActive = voiceSettings.dialect === "egyptian" || voiceSettings.persona.startsWith("egyptian-");
-  const activeMp4Src = "./assets/video/checkup_promo.mp4?v=20261101_final_checkup";
+  const activeMp4Src = "./assets/video/checkup_promo.mp4?v=20261101_piano_v7";
 
   useEffect(() => {
     if (videoElementRef.current && viewMode === "video-mp4") {
@@ -188,17 +188,8 @@ export default function App() {
   useEffect(() => {
     if (activeIndex !== currentSceneIndex) {
       setCurrentSceneIndex(activeIndex);
-      if (isPlaying && activeCampaign === "checkup") {
-        speechService.speakScene(scenes[activeIndex], voiceSettings, () => {
-          setIsVoiceActive(true);
-          if (masterAudioRef.current) masterAudioRef.current.volume = 0.22;
-        }, () => {
-          setIsVoiceActive(false);
-          if (masterAudioRef.current) masterAudioRef.current.volume = 0.85;
-        });
-      }
     }
-  }, [activeIndex, currentSceneIndex, isPlaying, activeCampaign, scenes, voiceSettings]);
+  }, [activeIndex, currentSceneIndex]);
 
   // Master Play/Pause Controller
   const handlePlayPause = () => {
@@ -226,20 +217,10 @@ export default function App() {
       setIsPlaying(false);
       setIsVoiceActive(false);
       speechService.stop();
-      if (masterAudioRef.current) masterAudioRef.current.volume = 0.85;
     } else {
       audio.play().catch(console.warn);
       setIsPlaying(true);
       setIsVoiceActive(true);
-      if (activeCampaign === "checkup") {
-        speechService.speakScene(scenes[currentSceneIndex], voiceSettings, () => {
-          setIsVoiceActive(true);
-          if (masterAudioRef.current) masterAudioRef.current.volume = 0.22;
-        }, () => {
-          setIsVoiceActive(false);
-          if (masterAudioRef.current) masterAudioRef.current.volume = 0.85;
-        });
-      }
     }
   };
 
@@ -394,7 +375,7 @@ export default function App() {
 
   const downloadMasterAudioMP3 = () => {
     const a = document.createElement("a");
-    a.href = "./assets/audio/rt_lab_master_soundtrack.mp3?v=20261101_checkup";
+    a.href = "./assets/audio/rt_lab_master_soundtrack.mp3?v=20261101_piano_v7";
     a.download = "RT-Lab-Comprehensive-Checkup-Audio.mp3";
     document.body.appendChild(a);
     a.click();

@@ -27,12 +27,12 @@ interface AudioMixerPanelProps {
 export const AudioMixerPanel: React.FC<AudioMixerPanelProps> = ({
   voiceSettings,
   onVoiceSettingsChange,
-  selectedMusicTrack = "master-soundtrack",
+  selectedMusicTrack = "soft-piano",
   onMusicTrackChange,
   isVoiceActive,
 }) => {
   const [masterVol, setMasterVol] = useState(0.95);
-  const [musicVol, setMusicVol] = useState(0.24);
+  const [musicVol, setMusicVol] = useState(0.18);
   const [voiceVol, setVoiceVol] = useState(1.0);
   const [ducking, setDucking] = useState(true);
   const [currentTrackId, setCurrentTrackId] = useState(selectedMusicTrack);

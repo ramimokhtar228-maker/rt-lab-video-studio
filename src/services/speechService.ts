@@ -25,7 +25,7 @@ export const VOICE_PERSONAS: VoiceOption[] = [
     description: "نبرة صوت طبيعية راقية تتحدث بعفوية وألفة مع العملاء والمرضى",
     engine: "recorded",
     geminiVoice: "Kore",
-    sampleAudioSrc: "./assets/audio/egyptian-female/scene-1.wav",
+    sampleAudioSrc: "./assets/audio/egyptian-female/scene-1.wav?v=20261101_piano_v7",
     dialectStyle: "Natural warm Egyptian Arabic dialect announcer, friendly polite Cairo accent, medical commercial",
   },
   {
@@ -37,7 +37,7 @@ export const VOICE_PERSONAS: VoiceOption[] = [
     description: "نبرة طبيب مصري وقور، هادئ ومريح للقلب يبعث على الثقة والأمان",
     engine: "recorded",
     geminiVoice: "Fenrir",
-    sampleAudioSrc: "./assets/audio/egyptian-male/scene-1.wav",
+    sampleAudioSrc: "./assets/audio/egyptian-male/scene-1.wav?v=20261101_piano_v7",
     dialectStyle: "Authoritative respectful warm Egyptian doctor announcer, polite friendly reassurance, Cairo accent",
   },
   {
@@ -62,7 +62,7 @@ export const VOICE_PERSONAS: VoiceOption[] = [
     description: "الصوت الرسمي المعتمد لإعلان معامل RT بنبرة إذاعية واضحة جداً",
     engine: "recorded",
     geminiVoice: "Kore",
-    sampleAudioSrc: "./assets/audio/scene-1.wav",
+    sampleAudioSrc: "./assets/audio/scene-1.wav?v=20261101_piano_v7",
     dialectStyle: "Warm, respectful, articulate, professional, celebratory Arabic medical announcer",
   },
   {

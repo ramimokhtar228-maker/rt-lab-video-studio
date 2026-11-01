@@ -45,13 +45,13 @@ export const VideoDownloadModal: React.FC<VideoDownloadModalProps> = ({
 
   const activeVideoUrl =
     selectedVersion === "egyptian"
-      ? "./assets/video/checkup_promo.mp4?v=20261101_final_checkup"
-      : "./assets/video/checkup_promo.mp4?v=20261101_final_checkup";
+      ? "./assets/video/checkup_promo.mp4?v=20261101_piano_v7"
+      : "./assets/video/checkup_promo.mp4?v=20261101_piano_v7";
 
   const activeAudioUrl =
     selectedVersion === "egyptian"
-      ? "./assets/audio/rt_lab_egyptian_master_soundtrack.mp3?v=20261101_final_checkup"
-      : "./assets/audio/rt_lab_master_soundtrack.mp3?v=20261101_final_checkup";
+      ? "./assets/audio/rt_lab_egyptian_master_soundtrack.mp3?v=20261101_piano_v7"
+      : "./assets/audio/rt_lab_master_soundtrack.mp3?v=20261101_piano_v7";
 
   const activeFilename =
     selectedVersion === "egyptian"

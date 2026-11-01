@@ -17,11 +17,18 @@ export interface MusicTrackOption {
 
 export const MUSIC_PRESETS: MusicTrackOption[] = [
   {
+    id: "soft-piano",
+    name: "بيانو هادئ ورقيق (Delicate Piano) ⭐ الموصى به",
+    description: "نغمات بيانو كلاسيكية ناعمة وهادئة تبرز الصوت بنقاء فائق بدون أي نبضات",
+    bpm: 68,
+    fileSrc: "./assets/audio/music_piano_delicate.mp3",
+  },
+  {
     id: "master-soundtrack",
     name: "الموسيقى الرسمية الماستر (Original Master)",
     description: "الموسيقى الاحتفالية المعتمدة لمعامل RT بصوت نقي متصل",
     bpm: 72,
-    fileSrc: "./assets/audio/gentle_music.mp3",
+    fileSrc: "./assets/audio/music_piano_delicate.mp3",
   },
   {
     id: "egyptian-warm",
@@ -29,13 +36,6 @@ export const MUSIC_PRESETS: MusicTrackOption[] = [
     description: "عزف دافئ وراقي يجمع بين العود والقانون والوتريات الهادئة",
     bpm: 68,
     fileSrc: "./assets/audio/music_oriental_warm.mp3",
-  },
-  {
-    id: "soft-piano",
-    name: "بيانو هادئ ورقيق (Delicate Piano)",
-    description: "نغمات بيانو كلاسيكية ناعمة تبعث على الراحة والسكينة",
-    bpm: 68,
-    fileSrc: "./assets/audio/music_piano_delicate.mp3",
   },
   {
     id: "medical-calm",
@@ -74,7 +74,7 @@ class RTStudioAudioEngine {
 
   private isMusicPlaying: boolean = false;
   private musicTimer: number | null = null;
-  private currentTrack: string = "master-soundtrack";
+  private currentTrack: string = "soft-piano";
   private currentStep: number = 0;
   private activeMusicSourceNode: AudioBufferSourceNode | null = null;
 
@@ -84,7 +84,7 @@ class RTStudioAudioEngine {
 
   // Volumes
   private masterVol: number = 0.95;
-  private musicVol: number = 0.24; // gentle background
+  private musicVol: number = 0.16; // gentle piano background, zero pulses
   private voiceVol: number = 1.0;  // crystal clear voice
   private sfxVol: number = 0.6;
   private duckingEnabled: boolean = true;

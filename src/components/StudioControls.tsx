@@ -279,15 +279,6 @@ export const StudioControls: React.FC<StudioControlsProps> = ({
                 <Headphones className="w-3.5 h-3.5" />
                 <span>{isTestingAudio ? 'إيقاف الاختبار الصوتي' : 'استمع للتعليق الصوتي لهذا المشهد الآن'}</span>
               </button>
-
-              <button
-                onClick={() => {
-                  audioEngine.playHeartbeatPulse();
-                }}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:text-slate-200 bg-slate-950 border border-slate-800"
-              >
-                <span>اختبار نبضات القلب الطبية</span>
-              </button>
             </div>
 
             {/* AI Script Styling Box */}
