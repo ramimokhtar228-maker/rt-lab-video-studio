@@ -45,18 +45,18 @@ export const VideoDownloadModal: React.FC<VideoDownloadModalProps> = ({
 
   const activeVideoUrl =
     selectedVersion === "egyptian"
-      ? "./assets/video/rt_lab_21st_anniversary_egyptian.mp4?v=20261024_faststart_v2"
-      : "./assets/video/rt_lab_21st_anniversary_promo.mp4?v=20261024_faststart_v2";
+      ? "./assets/video/checkup_promo.mp4?v=20261101_final_checkup"
+      : "./assets/video/checkup_promo.mp4?v=20261101_final_checkup";
 
   const activeAudioUrl =
     selectedVersion === "egyptian"
-      ? "./assets/audio/rt_lab_egyptian_master_soundtrack.mp3?v=20261024"
-      : "./assets/audio/rt_lab_master_soundtrack.mp3?v=20261024";
+      ? "./assets/audio/rt_lab_egyptian_master_soundtrack.mp3?v=20261101_final_checkup"
+      : "./assets/audio/rt_lab_master_soundtrack.mp3?v=20261101_final_checkup";
 
   const activeFilename =
     selectedVersion === "egyptian"
-      ? "RT-Lab-21st-Anniversary-Commercial-Egyptian.mp4"
-      : "RT-Lab-21st-Anniversary-Commercial-Standard.mp4";
+      ? "RT-Lab-Comprehensive-Checkup-Egyptian.mp4"
+      : "RT-Lab-Comprehensive-Checkup-Standard.mp4";
 
   // Helper to fetch video file with real progress
   const fetchVideoBlob = async (url: string): Promise<Blob> => {
@@ -116,7 +116,7 @@ export const VideoDownloadModal: React.FC<VideoDownloadModalProps> = ({
         setStatusMessage("افتح قائمة المشاركة واختر 'حفظ الفيديو'...");
         await navigator.share({
           title: "إعلان معامل رامي مختار RT للتحاليل الطبية",
-          text: "احتفالية 21 عاماً من التميز والريادة - خصم يصل إلى 90% على التحاليل الطبية | للحجز: 01100874444",
+          text: "قريباً.. انطلاق عروض الفحص الشامل المخفض من معامل رامي مختار RT LAB بـ 3 باقات متكاملة | للحجز والاستفسار: 01100874444",
           files: [file],
         });
         setIsSuccess(true);
@@ -181,7 +181,7 @@ export const VideoDownloadModal: React.FC<VideoDownloadModalProps> = ({
   const handleDownloadAudio = () => {
     const link = document.createElement("a");
     link.href = activeAudioUrl;
-    link.download = `RT-Lab-21st-Anniversary-${selectedVersion === "egyptian" ? "Egyptian" : "Master"}-Soundtrack.mp3`;
+    link.download = `RT-Lab-Comprehensive-Checkup-${selectedVersion === "egyptian" ? "Egyptian" : "Master"}-Soundtrack.mp3`;
     link.target = "_blank";
     document.body.appendChild(link);
     link.click();

@@ -46,7 +46,7 @@ export const MUSIC_PRESETS: MusicTrackOption[] = [
   {
     id: "celebration-acoustic",
     name: "احتفالية دافئة ومبهجة (Warm Celebration)",
-    description: "ألحان مفعمة بالأمل والامتنان لمرور 21 عاماً",
+    description: "ألحان مفعمة بالأمل والتفاؤل تعزف بمناسبة انطلاق عروض الفحص الشامل",
     bpm: 76,
   },
   {

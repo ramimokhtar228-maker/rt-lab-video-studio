@@ -82,7 +82,7 @@ export const VOICE_PERSONAS: VoiceOption[] = [
     category: "standard",
     avatar: "🎙️",
     badge: "فصحى وقورة • هيبة وثقة",
-    description: "نبرة صوت جهورية فخمة تعكس 21 عاماً من الخبرة والريادة",
+    description: "نبرة صوت جهورية فخمة تعكس دقة الفحوصات الطبية والريادة المخبرية",
     engine: "gemini-ai",
     geminiVoice: "Fenrir",
     dialectStyle: "Authoritative, dignified, prestigious Arabic medical announcer",

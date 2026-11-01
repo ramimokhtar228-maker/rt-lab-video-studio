@@ -90,7 +90,7 @@ export class RTVideoRecorderService {
     });
   }
 
-  public async downloadVideo(blob: Blob, filename = "RT-Lab-21st-Anniversary-Custom.mp4") {
+  public async downloadVideo(blob: Blob, filename = "RT-Lab-Comprehensive-Checkup.mp4") {
     const isMobile =
       typeof navigator !== "undefined" &&
       /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);

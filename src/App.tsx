@@ -49,7 +49,11 @@ export default function App() {
 
   const [scenes, setScenes] = useState<VideoScene[]>(() => {
     try {
-      const saved = localStorage.getItem("rt_lab_custom_scenes_checkup_v3");
+      localStorage.removeItem("rt_lab_custom_scenes");
+      localStorage.removeItem("rt_lab_custom_scenes_v2");
+      localStorage.removeItem("rt_lab_scenes_backup");
+      localStorage.removeItem("rt_lab_custom_scenes_checkup_v3");
+      const saved = localStorage.getItem("rt_lab_custom_scenes_checkup_v4");
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) return parsed;
@@ -62,7 +66,7 @@ export default function App() {
 
   const [hasCustomScenes, setHasCustomScenes] = useState<boolean>(() => {
     try {
-      return !!localStorage.getItem("rt_lab_custom_scenes_checkup_v3");
+      return !!localStorage.getItem("rt_lab_custom_scenes_checkup_v4");
     } catch {
       return false;
     }
@@ -166,9 +170,7 @@ export default function App() {
   const { index: activeIndex, scene: currentScene, sceneProgress } = getCurrentSceneAndProgress();
 
   const isEgyptianActive = voiceSettings.dialect === "egyptian" || voiceSettings.persona.startsWith("egyptian-");
-  const activeMp4Src = isEgyptianActive
-    ? "./assets/video/rt_lab_21st_anniversary_egyptian.mp4?v=20261024_faststart_v2"
-    : "./assets/video/rt_lab_21st_anniversary_promo.mp4?v=20261024_faststart_v2";
+  const activeMp4Src = "./assets/video/checkup_promo.mp4?v=20261101_final_checkup";
 
   useEffect(() => {
     if (videoElementRef.current && viewMode === "video-mp4") {
@@ -320,7 +322,7 @@ export default function App() {
     setScenes((prev) => {
       const next = prev.map((s) => (s.id === updated.id ? updated : s));
       try {
-        localStorage.setItem("rt_lab_custom_scenes_v2", JSON.stringify(next));
+        localStorage.setItem("rt_lab_custom_scenes_checkup_v4", JSON.stringify(next));
       } catch (e) {
         console.warn("Could not save scenes:", e);
       }
@@ -335,8 +337,10 @@ export default function App() {
     try {
       localStorage.removeItem("rt_lab_custom_scenes_v2");
       localStorage.removeItem("rt_lab_custom_scenes");
+      localStorage.removeItem("rt_lab_custom_scenes_checkup_v3");
+      localStorage.removeItem("rt_lab_custom_scenes_checkup_v4");
     } catch {}
-    setScenes(DEFAULT_SCENES);
+    setScenes(COMPREHENSIVE_CHECKUP_SCENES);
     setHasCustomScenes(false);
     studioAudio.playCelebrationChime();
   };
@@ -379,7 +383,7 @@ export default function App() {
     const blob = await videoRecorder.stopRecording();
     setIsRecording(false);
     if (blob) {
-      await videoRecorder.downloadVideo(blob, `RT-Lab-21st-Anniversary-Custom.mp4`);
+      await videoRecorder.downloadVideo(blob, `RT-Lab-Comprehensive-Checkup.mp4`);
       studioAudio.playCelebrationChime();
     }
   };
@@ -390,8 +394,8 @@ export default function App() {
 
   const downloadMasterAudioMP3 = () => {
     const a = document.createElement("a");
-    a.href = "./assets/audio/rt_lab_master_soundtrack.mp3?v=20261024";
-    a.download = "RT-Lab-21st-Anniversary-Audio-Promo.mp3";
+    a.href = "./assets/audio/rt_lab_master_soundtrack.mp3?v=20261101_checkup";
+    a.download = "RT-Lab-Comprehensive-Checkup-Audio.mp3";
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);

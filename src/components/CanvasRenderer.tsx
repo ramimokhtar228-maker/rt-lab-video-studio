@@ -227,16 +227,16 @@ export const CanvasRenderer: React.FC<CanvasRendererProps> = ({
       ctx.font = `600 ${isVertical ? "20px" : "18px"} 'Readex Pro', sans-serif`;
       ctx.fillText("RT Medical Laboratories • دقة وثقة", emblemX - 42, headerY + 22);
 
-      // 21st Anniversary Badge on Left
+      // Comprehensive Checkup Badge on Left
       const badgeX = isVertical ? 60 : 80;
       ctx.textAlign = "left";
       ctx.fillStyle = "#fbbf24";
       ctx.font = `bold ${isVertical ? "26px" : "22px"} 'Cairo', sans-serif`;
-      ctx.fillText("★ 21st ANNIVERSARY ★", badgeX, headerY - 4);
+      ctx.fillText("★ الفحص الشامل المخفض ★", badgeX, headerY - 4);
 
       ctx.fillStyle = "#fef08a";
       ctx.font = `600 ${isVertical ? "20px" : "16px"} 'Cairo', sans-serif`;
-      ctx.fillText("21 عاماً من الريادة (2005 - 2026)", badgeX, headerY + 20);
+      ctx.fillText("3 باقات ذكية تناسب كل الأعمار", badgeX, headerY + 20);
       ctx.restore();
 
       // 5. Draw Scene Main Content & Visuals
@@ -398,7 +398,7 @@ export const CanvasRenderer: React.FC<CanvasRendererProps> = ({
     if (scene.id === "scene-5" || scene.callToActions?.phones) {
       drawContactCard(ctx, textX, boxY, textColWidth, scene.callToActions?.phones || ["01100874444", "01100046841"]);
     } else if (scene.id === "scene-2") {
-      drawAnniversaryCard(ctx, textX, boxY, textColWidth);
+      drawCheckupPackagesCard(ctx, textX, boxY, textColWidth);
     } else {
       drawFeatureHighlights(ctx, textX, boxY, textColWidth, scene.id);
     }
@@ -596,8 +596,8 @@ export const CanvasRenderer: React.FC<CanvasRendererProps> = ({
     ctx.restore();
   };
 
-  // Helper: Draw 21st Anniversary Milestone Card
-  const drawAnniversaryCard = (
+  // Helper: Draw Comprehensive Checkup Packages Card
+  const drawCheckupPackagesCard = (
     ctx: CanvasRenderingContext2D,
     rightX: number,
     y: number,
@@ -608,24 +608,24 @@ export const CanvasRenderer: React.FC<CanvasRendererProps> = ({
     const startX = rightX - boxW;
 
     const cardGrad = ctx.createLinearGradient(startX, y, startX + boxW, y);
-    cardGrad.addColorStop(0, "rgba(234, 179, 8, 0.15)");
-    cardGrad.addColorStop(1, "rgba(161, 98, 7, 0.3)");
+    cardGrad.addColorStop(0, "rgba(244, 63, 94, 0.18)");
+    cardGrad.addColorStop(1, "rgba(159, 18, 57, 0.35)");
     ctx.fillStyle = cardGrad;
-    ctx.strokeStyle = "#facc15";
+    ctx.strokeStyle = "#fb7185";
     ctx.lineWidth = 2;
     roundRect(ctx, startX, y, boxW, boxH, 20);
     ctx.fill();
     ctx.stroke();
 
     ctx.textAlign = "right";
-    ctx.fillStyle = "#fef08a";
+    ctx.fillStyle = "#fecdd3";
     ctx.font = "bold 22px 'Cairo', sans-serif";
-    ctx.fillText("🏆 مسيرة 21 عاماً من الثقة والمصداقية (2005 - 2026)", rightX - 25, y + 36);
+    ctx.fillText("🩺 باقات الفحص الشامل المخفض من معامل RT", rightX - 25, y + 36);
 
     ctx.fillStyle = "#ffffff";
     ctx.font = "600 20px 'Cairo', sans-serif";
-    ctx.fillText("• معامل RT صرح طبي متكامل يخدم آلاف العملاء سنوياً", rightX - 25, y + 74);
-    ctx.fillText("• اعتمادات دولية وأدق الأجهزة الطبية في مصر والشرق الأوسط", rightX - 25, y + 106);
+    ctx.fillText("• الباقة الأساسية السريعة  • الباقة المتقدمة الشاملة للشباب", rightX - 25, y + 74);
+    ctx.fillText("• الباقة الذهبية لكبار السن والعائلة بأعلى معايير الدقة", rightX - 25, y + 106);
 
     ctx.restore();
   };
